@@ -1,0 +1,144 @@
+import {FiMenu} from 'react-icons/fi'
+
+const Nav = () => {
+    return (
+      <nav className="">
+        <div className="m-auto px-2 md:px-12 lg:px-7">
+          <div className="flex flex-wrap items-center justify-between py-3 gap-6 md:py-4 md:gap-0">
+            <div className="w-full px-6 flex justify-between lg:w-max md:px-0">
+              <a
+                href="#"
+                aria-label="logo"
+                className="flex space-x-2 items-center"
+              >
+                <img
+                  src="https://logodix.com/logo/961556.png"
+                  className="w-12"
+                  alt="tailus logo"
+                  width="144"
+                  height="133"
+                />
+                <span className="text-2xl font-bold text-yellow-900">
+                  Tailus
+                </span>
+              </a>
+
+              <label
+                aria-label="humburger"
+                id="hamburger"
+                className="btn btn-warning drawer-button lg:hidden"
+                htmlFor="my-drawer"
+              >
+                <FiMenu />
+              </label>
+            </div>
+            <div className="hidden w-full lg:flex flex-wrap justify-end items-center space-y-6 p-6 rounded-xl bg-white md:space-y-0 md:p-0 md:flex-nowrap md:bg-transparent lg:w-7/12">
+              {/* <div className="text-gray-600 lg:pr-4">
+                  <ul className="space-y-6 tracking-wide font-medium text-sm md:flex md:space-y-0">
+                    <li>
+                      <a
+                        href="#"
+                        className="block md:px-4 transition hover:text-yellow-700"
+                      >
+                        <span>I've a restaurant</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        className="block md:px-4 transition hover:text-yellow-700"
+                      >
+                        <span>Wishlist</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        className="block md:px-4 transition hover:text-yellow-700"
+                      >
+                        <span>Cart</span>
+                      </a>
+                    </li>
+                  </ul>
+                </div> */}
+
+              <div className="w-full space-y-2 border-yellow-200 lg:space-y-0 md:w-max lg:border-l">
+                <button
+                  type="button"
+                  title="Start buying"
+                  className="w-full py-3 px-6 text-center rounded-full transition active:bg-yellow-200 focus:bg-yellow-100 sm:w-max"
+                >
+                  <span className="block text-yellow-800 font-semibold text-sm">
+                    Sign up
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  title="Start buying"
+                  className="w-full py-3 px-6 text-center rounded-full transition bg-yellow-300 hover:bg-yellow-100 active:bg-yellow-400 focus:bg-yellow-300 sm:w-max"
+                >
+                  <span className="block text-yellow-900 font-semibold text-sm">
+                    Login
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="drawer z-10">
+          <input id="my-drawer" type="checkbox" className="drawer-toggle" />
+          <div className="drawer-side">
+            <label htmlFor="my-drawer" className="drawer-overlay"></label>
+            <ul className="menu p-4 w-80 h-full bg-base-200 text-base-content">
+              {/* Sidebar content here */}
+              <li>
+                <div className="w-full px-6 flex justify-between lg:w-max md:px-0">
+                  <a
+                    href="#"
+                    aria-label="logo"
+                    className="flex space-x-2 items-center"
+                  >
+                    <img
+                      src="https://logodix.com/logo/961556.png"
+                      className="w-12"
+                      alt="tailus logo"
+                      width="144"
+                      height="133"
+                    />
+                    <span className="text-2xl font-bold text-yellow-900">
+                      Tailus
+                    </span>
+                  </a>
+                </div>
+                <hr />
+              </li>
+              <li>
+                <button
+                  type="button"
+                  title="Start buying"
+                  className="w-full py-3 px-6 text-center rounded-full transition bg-yellow-300 hover:bg-yellow-100 active:bg-yellow-400 focus:bg-yellow-300 sm:w-max my-2"
+                >
+                  <span className="block text-yellow-800 font-semibold text-sm">
+                    Sign up
+                  </span>
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  title="Start buying"
+                  className="w-full py-3 px-6 text-center rounded-full transition bg-yellow-300 hover:bg-yellow-100 active:bg-yellow-400 focus:bg-yellow-300 sm:w-max"
+                >
+                  <span className="block text-yellow-900 font-semibold text-sm">
+                    Login
+                  </span>
+                </button>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    );
+}
+
+export default Nav;
