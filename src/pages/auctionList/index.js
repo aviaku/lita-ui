@@ -73,7 +73,7 @@ const handleReset = () => {
 
   useEffect(() => {
     if (!auctions.length) auctionList();
-  });
+  }, []);
 
   return (
     <div>

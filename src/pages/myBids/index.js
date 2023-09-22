@@ -89,12 +89,14 @@ const MyBids = () => {
             {auctions &&
               auctions.map((auction) => (
                 <Card6
-                  _id={auction._id}
-                  basePrice={auction.basePrice}
-                  dateTime={auction.dateTime}
+                  _id={auction.auctionDetails._id}
+                  basePrice={auction.auctionDetails.basePrice}
+                  dateTime={auction.auctionDetails.dateTime}
                   game={auction.game}
                   user={auction.user}
-                  bids={auction.bid}
+                  bids={auction.auctionDetails.bid}
+                  eligibleBids={auction.auctionDetails.eligibleBids}
+                  component={"myBids"}
                 />
               ))}
           </div>

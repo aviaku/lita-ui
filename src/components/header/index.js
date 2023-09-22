@@ -1,5 +1,6 @@
 import "./style.css";
 import { Link } from "react-router-dom";
+import Cookies from "js-cookie";
 import {
   ArrowDown,
   Friends,
@@ -90,17 +91,18 @@ export default function Header({ page, getAllPosts }) {
           <Gaming color={color} />
         </Link>
       </div> */}
-      <div className="header_right">
-        <Link
-          to="/profile"
-          className={`profile_link hover1 ${
-            page === "profile" ? "active_link" : ""
-          }`}
-        >
-          <img src={user?.picture} alt="" />
-          <span>{user?.first_name}</span>
-        </Link>
-        {/* <div
+      {Cookies.get("user") ? (
+        <div className="header_right">
+          <Link
+            to="/profile"
+            className={`profile_link hover1 ${
+              page === "profile" ? "active_link" : ""
+            }`}
+          >
+            <img src={user?.picture} alt="" />
+            <span>{user?.first_name}</span>
+          </Link>
+          {/* <div
           className={`circle_icon hover1 ${showAllMenu && "active_header"}`}
           ref={allmenu}
         >
@@ -119,27 +121,39 @@ export default function Header({ page, getAllPosts }) {
         <div className="circle_icon hover1">
           <Messenger />
         </div> */}
-        {/* <div className="circle_icon hover1">
+          {/* <div className="circle_icon hover1">
           <Notifications />
           <div className="right_notification">5</div>
         </div> */}
-        <div
-          className={`circle_icon hover1 ${showUserMenu && "active_header"}`}
-          ref={usermenu}
-        >
           <div
-            onClick={() => {
-              setShowUserMenu((prev) => !prev);
-            }}
+            className={`circle_icon hover1 ${showUserMenu && "active_header"}`}
+            ref={usermenu}
           >
-            <div style={{ transform: "translateY(2px)" }}>
-              <ArrowDown />
+            <div
+              onClick={() => {
+                setShowUserMenu((prev) => !prev);
+              }}
+            >
+              <div style={{ transform: "translateY(2px)" }}>
+                <ArrowDown />
+              </div>
             </div>
-          </div>
 
-          {showUserMenu && <UserMenu user={user} />}
+            {showUserMenu && <UserMenu user={user} />}
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="header_right">
+          <Link
+            to={`/login`}
+            className={`relative flex h-9 w-full items-center justify-center px-4 before:absolute before:inset-0 before:rounded-full before:bg-primary before:transition before:duration-300 hover:before:scale-105 active:duration-75 active:before:scale-95 sm:w-max`}
+          >
+            <span className="relative text-sm font-semibold text-white">
+              Login
+            </span>
+          </Link>
+        </div>
+      )}
     </header>
   );
 }

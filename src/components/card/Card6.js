@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import CountdownTimerComp from "../countdown/CountdownTimer";
 
-const Card6 = ({_id, basePrice, dateTime, game, user, bids}) => {
+const Card6 = ({_id, basePrice, dateTime, game, user, bids, component}) => {
 
   return (
     <Link to={`/auction/${_id}`} className="w-full lg:pl-2 lg:pr-2 p-4">
@@ -9,7 +9,7 @@ const Card6 = ({_id, basePrice, dateTime, game, user, bids}) => {
         <div className="m-h-64 relative rounded-t-lg">
           <figure className="">
             <img
-              src={user.picture || game.picture}
+              src={user?.picture || game?.picture}
               alt=""
               className="ml-auto mr-auto object-cover rounded-t-lg h-36 w-96"
             />
@@ -25,15 +25,15 @@ const Card6 = ({_id, basePrice, dateTime, game, user, bids}) => {
               <div>
                 <CountdownTimerComp targetDate={new Date(dateTime).getTime()} />
                 <p className="text-xl font-semibold text-slate-600">
-                  {user.first_name} {user.last_name}
+                  {user?.first_name} {user?.last_name}
                 </p>
               </div>
               <div>
                 <p className="text-slate-500 text-sm font-medium mt-2">
-                  {game.name}
+                  {game?.name}
                 </p>
                 <div className="flex items-center space-x-2 text-sm text-gray-500 capitalize">
-                  <div> {bids ? bids.length : 0} intersted</div>
+                  <div> {bids ? bids?.length : 0} intersted</div>
                   <div>·</div>
                   {/* <div> 2 going </div> */}
                 </div>
@@ -41,12 +41,14 @@ const Card6 = ({_id, basePrice, dateTime, game, user, bids}) => {
             </div>
           </div>
         </div>
+        {!component ? (
         <button
           href=""
           className="w-full linear rounded-[10px] hover:translate-y-1 hover:shadow-md bg-gradient-to-b from-yellow-200 to-yellow-300 hover:to-red-300 active:from-yellow-400 focus:from-red-400 px-4 py-2 text-base font-medium transition duration-200"
         >
           Bid Now
         </button>
+        ) : null }
       </div>
     </Link>
   );
