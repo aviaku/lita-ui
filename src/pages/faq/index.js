@@ -15,7 +15,7 @@ function FAQPage() {
           {/* FAQ Item 1 */}
           <div className="border border-white rounded-lg p-6 shadow-md bg-white bg-opacity-10">
             <h2 className="text-xl font-semibold mb-4 text-white">
-              Q1: How does the auction system work on Tailus?
+              Q1: How does the auction system work on ItemSwap?
             </h2>
             <p className="text-gray-200">
               A1: Our auction system allows gamers to list gaming sessions and
@@ -31,7 +31,7 @@ function FAQPage() {
             </h2>
             <p className="text-gray-200">
               A2: Yes, anyone can join the auctions as long as they have an
-              account on Tailus. Simply create an account and
+              account on ItemSwap. Simply create an account and
               start bidding.
             </p>
           </div>

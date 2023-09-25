@@ -218,7 +218,7 @@ export default function Landing({ setVisible, posts, loading, getAllPosts }) {
         <div className="absolute top-0 right-40 w-72 h-72 bg-yellow-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob overflow-hidden animation-delay-2000"></div>
         <div className="absolute bottom-48 left-20 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob overflow-hidden animation-delay-3000"></div>
         <div className="absolute bottom-0 right-36 w-96 h-96 bg-teal-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob overflow-hidden animation-delay-4000"></div> */}
-        <div className="flex items-center">
+        {/* <div className="flex items-center">
           <div className="container ml-auto mr-auto flex flex-wrap items-start">
             <div className="w-full pl-5 lg:pl-2 mb-4 mt-4 flex items-center justify-between">
               <h1 className="text-3xl lg:text-4xl text-gray-700 font-bold">
@@ -245,7 +245,7 @@ export default function Landing({ setVisible, posts, loading, getAllPosts }) {
             </ScrollingCarousel>
           </div>
         </div>
-        <br />
+        <br /> */}
         <div className="flex items-center">
           <div className="container ml-auto mr-auto flex flex-wrap items-start">
             <div className="w-full pl-5 lg:pl-2 mb-4 mt-4 flex items-center justify-between">

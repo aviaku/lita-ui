@@ -12,7 +12,7 @@ function PrivacyPolicyPage() {
 
         <div className="border border-white rounded-lg p-6 shadow-md bg-white bg-opacity-10">
           <p className="text-gray-200">
-            Your privacy is our top priority at Tailus. We are
+            Your privacy is our top priority at ItemSwap. We are
             committed to protecting your personal information and ensuring a
             safe and secure gaming environment. Our Privacy Policy outlines the
             measures we take to safeguard your data and details how we collect,

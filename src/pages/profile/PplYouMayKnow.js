@@ -4,15 +4,16 @@ import axios from "axios";
 import { Dots } from "../../svg";
 import { stories } from "../../data/home";
 import AddFriendSmallCard from "./AddFriendSmallCard";
-export default function PplYouMayKnow() {
+export default function PplYouMayKnow({gamesPlayed}) {
 
   const apiEndpoint = process.env.REACT_APP_BACKEND_URL;
   const { user } = useSelector((state) => ({ ...state }));
   const [myGames, setMyGames] = useState(false);
   
+  console.log(window.location.href, 'gamesPlayed', gamesPlayed);
   const userGames = async () => {
     try {
-      const res = await axios.get(`${apiEndpoint}/gamers/${user.id}`, {
+      const res = await axios.get(`${apiEndpoint}/gamers/${user.username}`, {
         headers: {
           Authorization: `Bearer ${user.token}`,
         },

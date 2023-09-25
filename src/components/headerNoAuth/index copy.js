@@ -19,7 +19,7 @@ const Nav = () => {
                   height="133"
                 />
                 <span className="text-2xl font-bold text-yellow-900">
-                  Tailus
+                  ItemSwap
                 </span>
               </a>
 
@@ -106,7 +106,7 @@ const Nav = () => {
                       height="133"
                     />
                     <span className="text-2xl font-bold text-yellow-900">
-                      Tailus
+                      ItemSwap
                     </span>
                   </a>
                 </div>

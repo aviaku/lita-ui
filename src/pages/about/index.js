@@ -9,15 +9,15 @@ function AboutPage() {
       <Header />
       <div className=" p-8">
         <div className="max-w-3xl mx-auto mt-24 mb-8">
-          <h1 className="text-4xl font-bold mb-4">About Tailus</h1>
+          <h1 className="text-4xl font-bold mb-4">About ItemSwap</h1>
           <p className="text-lg mb-4">
-            Welcome to Tailus, the ultimate destination for gamers who want to
+            Welcome to ItemSwap, the ultimate destination for gamers who want to
             take their gaming experience to the next level! Our platform is
             designed to connect passionate gamers with their viewers and fans in
             an exciting and interactive way.
           </p>
           <p className="text-lg mb-4">
-            At Tailus, we believe in the power of gaming to bring people together,
+            At ItemSwap, we believe in the power of gaming to bring people together,
             and we've created a unique space where gamers can offer thrilling
             gaming sessions to their viewers through live auctions. Whether
             you're a streamer looking to engage with your audience in a new way

@@ -19,7 +19,8 @@ const Footer = () => {
                   height="133"
                 />
                 <span className="text-2xl font-bold text-yellow-900">
-                  Tailus <span className="text-yellow-700">Feedus</span>
+                  ItemSwap 
+                  {/* <span className="text-yellow-700">Feedus</span> */}
                 </span>
               </a>
               <p className="mt-2 text-sm text-gray-500">

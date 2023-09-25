@@ -229,7 +229,7 @@ export default function Profile({ getAllPosts }) {
       <div className="profile_bottom">
         <div className="profile_container">
           <div className="bottom_container">
-            <PplYouMayKnow />
+            <PplYouMayKnow gamesPlayed={profile.savedGames} />
             <div
               className={`profile_grid ${
                 check && scrollHeight >= height && leftHeight > 1000
