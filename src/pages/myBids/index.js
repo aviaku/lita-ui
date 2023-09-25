@@ -86,14 +86,15 @@ const MyBids = () => {
           </button>
           {/* </div> */}
           <div className="grid xl:grid-cols-4 sm:grid-cols-3 grid-cols-1  xl:gap-[30px] gap-5 mb-[40px]">
+            {console.log(auctions)}
             {auctions &&
               auctions.map((auction) => (
                 <Card6
                   _id={auction.auctionDetails._id}
                   basePrice={auction.auctionDetails.basePrice}
                   dateTime={auction.auctionDetails.dateTime}
-                  game={auction.game}
-                  user={auction.user}
+                  game={auction.auctionDetails.game}
+                  user={auction.auctionDetails.user}
                   bids={auction.auctionDetails.bid}
                   eligibleBids={auction.auctionDetails.eligibleBids}
                   component={"myBids"}
