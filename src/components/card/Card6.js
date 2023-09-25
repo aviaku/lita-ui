@@ -3,8 +3,6 @@ import CountdownTimerComp from "../countdown/CountdownTimer";
 
 const Card6 = ({_id, basePrice, dateTime, game, user, bids, component}) => {
 
-  console.log(user);
-
   return (
     <Link to={`/auction/${_id}`} className="w-full lg:pl-2 lg:pr-2 p-4">
       <div className="card bg-base-100 rounded-lg transform">
