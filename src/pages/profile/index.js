@@ -229,6 +229,7 @@ export default function Profile({ getAllPosts }) {
       <div className="profile_bottom">
         <div className="profile_container">
           <div className="bottom_container">
+            {console.log(profile)}
             <PplYouMayKnow gamesPlayed={profile.savedGames} />
             <div
               className={`profile_grid ${

@@ -1,10 +1,37 @@
 import { AiOutlineHeart, AiFillStar } from "react-icons/ai";
+import { useSelector } from "react-redux";
+import axios from "axios";
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 
-const Card1 = ({name, image, star, games, minBid}) => {
+const Card1 = ({name, image, star, games, minBid, username}) => {
+
+  const { user } = useSelector((state) => ({ ...state }));
+
+  const [profile, setProfile] = useState([]);
+
+  const getProfile = async () => {
+    try {
+      const { data } = await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}/getProfile/${username}`,
+        {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        }
+      );
+
+      setProfile(data);
+    } catch (error) {}
+  };
+
+  useEffect(() => {
+    getProfile();
+  }, [username]);
+
     return (
       <Link
-        to="/profile"
+        to={`/profile/${username}`}
         className="w-full md:w-1/2 lg:w-1/4 lg:pl-2 lg:pr-2 p-4"
       >
         <div className="bg-base-100 rounded-lg transform hover:translate-y-2 hover:shadow-xl transition duration-300">
@@ -17,57 +44,46 @@ const Card1 = ({name, image, star, games, minBid}) => {
               />
             </figure>
           </div>
-          <button className="absolute top-6 right-6 flex items-center justify-center rounded-full bg-white p-2 text-brand-500 hover:cursor-pointer">
+          {/* <button className="absolute top-6 right-6 flex items-center justify-center rounded-full bg-white p-2 text-brand-500 hover:cursor-pointer">
             <div className="flex h-full w-full items-center justify-center rounded-full text-xl hover:bg-gray-50">
               <AiOutlineHeart />
             </div>
-          </button>
+          </button> */}
           <div className="p-4 pt-0 flex flex-col rounded-b-lg">
-            <div className="mb-3 flex items-center justify-between px-1 md:items-start">
+            <div className="mb-3 flex items-center w-full justify-between px-1 md:items-start">
               <div className="mb-2">
                 <p className="text-lg font-bold text-gray-700"> {name} </p>
-                <div className="flex items-center">
+                {/* <div className="flex items-center">
                   <AiFillStar className="text-yellow-400" />
                   <AiFillStar className="text-yellow-400" />
                   <AiFillStar className="text-yellow-400" />
                   <AiFillStar className="text-yellow-400" />
                   <AiFillStar />
-                </div>
+                </div> */}
               </div>
-              <div className="flex flex-row-reverse md:mt-2 lg:mt-0">
-                <span className="z-0 ml-px inline-flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-[#E0E5F2] text-xs text-navy-700 ">
-                  +5
-                </span>
-                <span className="z-10 -mr-3 h-8 w-8 rounded-full border-2 border-white">
-                  <img
-                    className="h-full w-full rounded-full object-cover"
-                    src="https://horizon-tailwind-react-git-tailwind-components-horizon-ui.vercel.app/static/media/avatar1.eeef2af6dfcd3ff23cb8.png"
-                    alt=""
-                  />
-                </span>
-                <span className="z-10 -mr-3 h-8 w-8 rounded-full border-2 border-white">
-                  <img
-                    className="h-full w-full rounded-full object-cover"
-                    src="https://horizon-tailwind-react-git-tailwind-components-horizon-ui.vercel.app/static/media/avatar2.5692c39db4f8c0ea999e.png"
-                    alt=""
-                  />
-                </span>
-                <span className="z-10 -mr-3 h-8 w-8 rounded-full border-2 border-white">
-                  <img
-                    className="h-full w-full rounded-full object-cover"
-                    src="https://horizon-tailwind-react-git-tailwind-components-horizon-ui.vercel.app/static/media/avatar3.9f646ac5920fa40adf00.png"
-                    alt=""
-                  />
-                </span>
+              <div className="profile_friend_imgs">
+                {profile?.friends &&
+                  profile.friends.slice(0, 6).map((friend, i) => (
+                    <Link to={`/profile/${friend.username}`} key={i}>
+                      <img
+                        src={friend.picture}
+                        alt=""
+                        style={{
+                          transform: `translateX(${-i * 7}px)`,
+                          zIndex: `${i}`,
+                        }}
+                      />
+                    </Link>
+                  ))}
               </div>
             </div>
             <div className="flex items-center justify-between md:items-center lg:justify-between ">
-              <div className="flex">
+              {/* <div className="flex">
                 <p className="!mb-0 text-sm font-semibold text-blue-500">
                   Minimum Bid: <span>₹</span>
                   {minBid}
                 </p>
-              </div>
+              </div> */}
               <a
                 href="#_"
                 class="relative inline-flex items-center justify-center p-4 px-4 py-1 overflow-hidden font-medium text-indigo-600 transition duration-300 ease-out rounded-full shadow-xl group hover:ring-1 hover:ring-purple-500"

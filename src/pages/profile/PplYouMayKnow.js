@@ -9,8 +9,15 @@ export default function PplYouMayKnow({gamesPlayed}) {
   const apiEndpoint = process.env.REACT_APP_BACKEND_URL;
   const { user } = useSelector((state) => ({ ...state }));
   const [myGames, setMyGames] = useState(false);
-  
-  console.log(window.location.href, 'gamesPlayed', gamesPlayed);
+  const currentUrl = window.location.href.split("/");
+  const lastSegmentOfUrl = currentUrl[currentUrl.length - 1];
+  console.log(lastSegmentOfUrl, 'gamesPlayed', gamesPlayed);
+  let currentUsername = "";
+  if (lastSegmentOfUrl === "profile") {
+    currentUsername = user.username
+  } else {
+    currentUsername = lastSegmentOfUrl;
+  }
   const userGames = async () => {
     try {
       const res = await axios.get(`${apiEndpoint}/gamers/${user.username}`, {
@@ -38,7 +45,7 @@ export default function PplYouMayKnow({gamesPlayed}) {
         </div> */}
       </div>
       <div className="pplumayknow_list">
-        {myGames && myGames.map((item, i) => (
+        {gamesPlayed && gamesPlayed?.map((item, i) => (
           <AddFriendSmallCard item={item.game} key={i} />
         ))}
       </div>

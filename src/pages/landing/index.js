@@ -19,6 +19,7 @@ export default function Landing({ setVisible, posts, loading, getAllPosts }) {
   const middle = useRef(null);
   const [height, setHeight] = useState();
   const [games, setGames] = useState([]);
+  const [gamers, setGamers] = useState([]);
   const [auctions, setAuctions] = useState([]);
 
   const apiEndpoint = process.env.REACT_APP_BACKEND_URL;
@@ -80,6 +81,7 @@ export default function Landing({ setVisible, posts, loading, getAllPosts }) {
     },
   ];
 
+
   const auctionList = async () => {
     try {
       const res = await axios.post(
@@ -95,11 +97,9 @@ export default function Landing({ setVisible, posts, loading, getAllPosts }) {
 
   const playerss = async () => {
     try {
-      const res = await axios.get(
-        `${apiEndpoint}/getGamers`
-      );
+      const res = await axios.get(`${apiEndpoint}/getUserGamers`);
       console.log("🚀 ~ file: index.js:17 ~ Players ~ res:", res);
-      // setAuctions(res.data);
+      setGamers(res.data);
     } catch (error) {
       console.log("🚀 ~ file: index.js:26 ~ gameList ~ error:", error);
     }
@@ -218,34 +218,37 @@ export default function Landing({ setVisible, posts, loading, getAllPosts }) {
         <div className="absolute top-0 right-40 w-72 h-72 bg-yellow-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob overflow-hidden animation-delay-2000"></div>
         <div className="absolute bottom-48 left-20 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob overflow-hidden animation-delay-3000"></div>
         <div className="absolute bottom-0 right-36 w-96 h-96 bg-teal-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob overflow-hidden animation-delay-4000"></div> */}
-        {/* <div className="flex items-center">
+        <div className="flex items-center">
           <div className="container ml-auto mr-auto flex flex-wrap items-start">
             <div className="w-full pl-5 lg:pl-2 mb-4 mt-4 flex items-center justify-between">
               <h1 className="text-3xl lg:text-4xl text-gray-700 font-bold">
                 Top Gamers
               </h1>
-              <Link to="/gamers">
+              {/* <Link to="/gamers">
                 <button className="top-6 right-6 flex items-center justify-center rounded-full bg-white p-2 text-brand-500 hover:cursor-pointer">
                   <div className="flex h-full w-full items-center justify-center rounded-full text-xl hover:bg-gray-50">
                     <i className="right_icon"></i>
                   </div>
                 </button>
-              </Link>
+              </Link> */}
             </div>
             <ScrollingCarousel>
-              {players.map((player) => (
+              {gamers.map((gamer) => (
                 <Card1
-                  name={player.name}
-                  star={player.star}
-                  isLiked={player.isLiked}
-                  image={player.image}
-                  minBid={player.minBid}
+                  name={
+                    gamer.userInfo.first_name + " " + gamer.userInfo.last_name
+                  }
+                  // star={gamer.userInfo.star}
+                  // isLiked={gamer.userInfo.isLiked}
+                  image={gamer.userInfo.picture}
+                  username={gamer.userInfo.username}
+                  // minBid={gamer.userInfo.minBid}
                 />
               ))}
             </ScrollingCarousel>
           </div>
         </div>
-        <br /> */}
+        <br />
         <div className="flex items-center">
           <div className="container ml-auto mr-auto flex flex-wrap items-start">
             <div className="w-full pl-5 lg:pl-2 mb-4 mt-4 flex items-center justify-between">
