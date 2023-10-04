@@ -12,32 +12,32 @@ export default function SettingsPrivacy({ setVisible }) {
         >
           <i className="arrow_back_icon"></i>
         </div>
-        Auctions & Bids
+        Event & Donation
       </div>
       <Link to="/createAuction">
-      <div className="mmenu_item hover3">
-        <div className="small_circle">
-          <i className="settings_filled_icon"></i>
+        <div className="mmenu_item hover3">
+          <div className="small_circle">
+            <i className="settings_filled_icon"></i>
+          </div>
+          <span>Create Event</span>
         </div>
-        <span>Create Auction</span>
-      </div>
       </Link>
       <Link to="/myAuctions">
-      <div className="mmenu_item hover3">
-        <div className="small_circle">
-          <i className="privacy_checkup_icon"></i>
+        <div className="mmenu_item hover3">
+          <div className="small_circle">
+            <i className="privacy_checkup_icon"></i>
+          </div>
+          <span>My Events</span>
         </div>
-        <span>My Auctions</span>
-      </div>
       </Link>
-      <Link to="/myBids">
-      <div className="mmenu_item hover3">
-        <div className="small_circle">
-          <i className="privacy_shortcuts_icon"></i>
+      {/* <Link to="/myBids">
+        <div className="mmenu_item hover3">
+          <div className="small_circle">
+            <i className="privacy_shortcuts_icon"></i>
+          </div>
+          <span>My Bids</span>
         </div>
-        <span>My Bids</span>
-      </div>
-      </Link>
+      </Link> */}
       {/* <div className="mmenu_item hover3">
         <div className="small_circle">
           <i className="activity_log_icon"></i>

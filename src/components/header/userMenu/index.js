@@ -41,14 +41,20 @@ export default function UserMenu({ user }) {
               </div>
             </div>
           </Link>
+          <Link to="/auctions">
+            <div className="mmenu_main hover3">
+              <div className="small_circle">
+                <i className="all_friends_icon"></i>
+              </div>
+              <div className="mmenu_col">
+                <div className="mmenu_span1">Ongoing Events</div>
+              </div>
+            </div>
+          </Link>
           <Link to="/wallet">
             <div className="mmenu_main hover3">
               <div className="small_circle">
-                <img
-                  src="../../../icons/wallet1.png"
-                  alt=""
-                  
-                />
+                <img src="../../../icons/wallet1.png" alt="" />
               </div>
               <div className="mmenu_col">
                 <div className="mmenu_span1">Wallet</div>
@@ -65,7 +71,7 @@ export default function UserMenu({ user }) {
             <div className="small_circle">
               <i className="settings_filled_icon"></i>
             </div>
-            <span>Auctions & Bids</span>
+            <span>Event & Donation</span>
             <div className="rArrow">
               <i className="right_icon"></i>
             </div>

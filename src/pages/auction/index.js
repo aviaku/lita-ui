@@ -128,7 +128,8 @@ const Auction = () => {
 
   };
 
-  const donate = async () => {
+  const donate = async (e) => {
+    e.preventDefault();
 
     console.log("Hewewewewe");
 
@@ -137,7 +138,7 @@ const Auction = () => {
         `${apiEndpoint}/events/${id}/donate`,
         {
           type: donateTo,
-          amount: donationAmount,
+          amount: parseInt(donationAmount),
           userId: user?.id,
           createdAt: Date.now(),
         },
@@ -251,18 +252,19 @@ const Auction = () => {
                     value={`${donationAmount ? "₹" + donationAmount : ""}`}
                     onChange={(e) => handleAmountChange(e)}
                     className="input input-bordered w-full max-w-xs"
+                    required
                   />
                   <select
                     name="donateTo"
                     className="select select-bordered w-full max-w-xs"
                     onChange={(e) => setDonateTo(e.target.value)}
                   >
-                    <option value="host" selected>Host</option>
+                    <option value="host" selected>
+                      Host
+                    </option>
                     <option value="Winner">Winner</option>
                   </select>
-                  <button
-                    class="box-border relative z-30 inline-flex items-center justify-center w-auto px-8 py-3 overflow-hidden font-bold text-white transition-all duration-300 bg-indigo-600 rounded-md cursor-pointer group ring-offset-2 ring-1 ring-indigo-300 ring-offset-indigo-200 hover:ring-offset-indigo-500 ease focus:outline-none"
-                  >
+                  <button class="box-border relative z-30 inline-flex items-center justify-center w-auto px-8 py-3 overflow-hidden font-bold text-white transition-all duration-300 bg-indigo-600 rounded-md cursor-pointer group ring-offset-2 ring-1 ring-indigo-300 ring-offset-indigo-200 hover:ring-offset-indigo-500 ease focus:outline-none">
                     <span class="absolute bottom-0 right-0 w-8 h-20 -mb-8 -mr-5 transition-all duration-300 ease-out transform rotate-45 translate-x-1 bg-white opacity-10 group-hover:translate-x-0"></span>
                     <span class="absolute top-0 left-0 w-20 h-8 -mt-1 -ml-12 transition-all duration-300 ease-out transform -rotate-45 -translate-x-1 bg-white opacity-10 group-hover:translate-x-0"></span>
                     <span class="relative z-20 flex items-center text-sm">
@@ -283,6 +285,41 @@ const Auction = () => {
                     </span>
                   </button>
                 </form>
+              </div>
+              <br />
+              <div>
+                <h2 className="text-2xl font-semibold">Donors</h2>
+                {auction?.donations &&
+                  auction?.donations.map((donation) => (
+                    <div className="flex items-center mt-4">
+                      <div className="relative inline-block">
+                        <img
+                          src={
+                            donation?.user?.picture ||
+                            `https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D&w=1000&q=80`
+                          }
+                          className="h-16 rounded-md"
+                          alt=""
+                        />
+                        <i className="mdi mdi-check-decagram text-emerald-600 text-lg absolute -top-2 -end-2" />
+                      </div>
+                      <div className="ms-3">
+                        <h6 className="font-semibold">
+                          ₹{donation?.amount}{" "}
+                          <span className="text-slate-400">by</span>{" "}
+                          <a
+                            href="#"
+                            className="hover:text-violet-600 duration-500 ease-in-out"
+                          >
+                            {`${donation?.user?.first_name} ${donation?.user?.last_name}`}
+                          </a>
+                        </h6>
+                        <span className="text-slate-400 text-[16px]">
+                          {moment(donation?.createdAt).fromNow()}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
               </div>
             </div>
             {/* <SignOut /> */}
@@ -459,9 +496,10 @@ const Auction = () => {
                     aria-labelledby="wednesday-tab"
                   >
                     <div className="grid grid-cols-1">
+                      <h2 className="text-2xl font-semibold">Participants</h2>
                       {auction && auction?.status === "ACTIVE" ? (
-                        auction.eventMembers &&
-                        auction.eventMembers.map((bid) => (
+                        auction?.eventMembers &&
+                        auction?.eventMembers.map((bid) => (
                           <div className="flex items-center mt-4">
                             <div className="relative inline-block">
                               <img

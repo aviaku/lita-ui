@@ -76,7 +76,7 @@ const CreateAuction = () => {
         } catch (error) {
           toastify(error);
         }
-      // action.resetForm();
+      action.resetForm();
     },
   });
 
