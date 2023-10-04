@@ -243,53 +243,53 @@ const Auction = () => {
               <br />
               <div className="w-full flex justify-center items-center">
                 {user ? (
-                <form
-                  onSubmit={donate}
-                  className="flex justify-between items-center"
-                >
-                  <input
-                    type="text"
-                    placeholder="₹1000"
-                    value={`${donationAmount ? "₹" + donationAmount : ""}`}
-                    onChange={(e) => handleAmountChange(e)}
-                    className="input input-bordered w-full max-w-xs"
-                    required
-                  />
-                  <select
-                    name="donateTo"
-                    className="select select-bordered w-full max-w-xs"
-                    onChange={(e) => setDonateTo(e.target.value)}
+                  <form
+                    onSubmit={donate}
+                    className="flex justify-between items-center"
                   >
-                    <option value="host" selected>
-                      Host
-                    </option>
-                    <option value="winner">Winner</option>
-                  </select>
-                  <button class="box-border relative z-30 inline-flex items-center justify-center w-auto px-8 py-3 overflow-hidden font-bold text-white transition-all duration-300 bg-indigo-600 rounded-md cursor-pointer group ring-offset-2 ring-1 ring-indigo-300 ring-offset-indigo-200 hover:ring-offset-indigo-500 ease focus:outline-none">
-                    <span class="absolute bottom-0 right-0 w-8 h-20 -mb-8 -mr-5 transition-all duration-300 ease-out transform rotate-45 translate-x-1 bg-white opacity-10 group-hover:translate-x-0"></span>
-                    <span class="absolute top-0 left-0 w-20 h-8 -mt-1 -ml-12 transition-all duration-300 ease-out transform -rotate-45 -translate-x-1 bg-white opacity-10 group-hover:translate-x-0"></span>
-                    <span class="relative z-20 flex items-center text-sm">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        fill="currentColor"
-                        class="bi bi-heart-fill"
-                        viewBox="0 0 16 16"
-                      >
-                        <path
-                          fill-rule="evenodd"
-                          d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"
-                        />
-                      </svg>
-                      Donate
-                    </span>
-                  </button>
-                </form>
+                    <input
+                      type="text"
+                      placeholder="₹1000"
+                      value={`${donationAmount ? "₹" + donationAmount : ""}`}
+                      onChange={(e) => handleAmountChange(e)}
+                      className="input input-bordered w-full max-w-xs"
+                      required
+                    />
+                    <select
+                      name="donateTo"
+                      className="select select-bordered w-full max-w-xs"
+                      onChange={(e) => setDonateTo(e.target.value)}
+                    >
+                      <option value="host" selected>
+                        Host
+                      </option>
+                      <option value="winner">Winner</option>
+                    </select>
+                    <button class="box-border relative z-30 inline-flex items-center justify-center w-auto px-8 py-3 overflow-hidden font-bold text-white transition-all duration-300 bg-indigo-600 rounded-md cursor-pointer group ring-offset-2 ring-1 ring-indigo-300 ring-offset-indigo-200 hover:ring-offset-indigo-500 ease focus:outline-none">
+                      <span class="absolute bottom-0 right-0 w-8 h-20 -mb-8 -mr-5 transition-all duration-300 ease-out transform rotate-45 translate-x-1 bg-white opacity-10 group-hover:translate-x-0"></span>
+                      <span class="absolute top-0 left-0 w-20 h-8 -mt-1 -ml-12 transition-all duration-300 ease-out transform -rotate-45 -translate-x-1 bg-white opacity-10 group-hover:translate-x-0"></span>
+                      <span class="relative z-20 flex items-center text-sm">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          fill="currentColor"
+                          class="bi bi-heart-fill"
+                          viewBox="0 0 16 16"
+                        >
+                          <path
+                            fill-rule="evenodd"
+                            d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"
+                          />
+                        </svg>
+                        Donate
+                      </span>
+                    </button>
+                  </form>
                 ) : (
-                <Link to="/login" className="btn btn-primary mt-4 px-8">
-                  Login to Donate
-                </Link>
+                  <Link to="/login" className="btn btn-primary mt-4 px-8">
+                    Login to Donate
+                  </Link>
                 )}
               </div>
               <br />
@@ -320,6 +320,9 @@ const Auction = () => {
                             {`${donation?.user?.first_name} ${donation?.user?.last_name}`}
                           </a>
                         </h6>
+                        <p className="text-slate-400 text-[16px]">
+                          Given to <span className="text-gray-900 font-semibold">{donation?.type}</span>
+                        </p>
                         <span className="text-slate-400 text-[16px]">
                           {moment(donation?.createdAt).fromNow()}
                         </span>
