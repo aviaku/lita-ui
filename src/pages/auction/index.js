@@ -53,8 +53,9 @@ const Auction = () => {
 
   const { user } = useSelector((state) => ({ ...state }));
   console.log("Userrrrrrrrrrr", user);
-  const [bidAmount, setBidAmount] = useState("");
+  const [donationAmount, setDonationAmount] = useState("");
   const [auction, setAuction] = useState(null);
+  const [donateTo, setDonateTo] = useState("host");
   const [highestBid, setHighestBid] = useState([]);
   const [submitDisabled, setSubmitDisabled] = useState(true)
   const [auctionDateTime, setAuctionDateTime] = useState(null);
@@ -68,22 +69,24 @@ const Auction = () => {
   const bid = async (e) => {
     e.preventDefault();
 
+    console.log("Hellloooo");
+
     // const { uid, photoURL, displayName } = auth.currentUser;
 
-    if (bidAmount.trim() === "") {
-      return; // Skip if the formValue is empty or contains only whitespace
-    }
+    // if (bidAmount.trim() === "") {
+    //   return; // Skip if the formValue is empty or contains only whitespace
+    // }
 
     try {
-      const res = await axios.put(
-        `${apiEndpoint}/bid`,
+      const res = await axios.post(
+        `${apiEndpoint}/events/purchase-ticket`,
         {
           userId: user?.id,
-          amount: bidAmount,
+          amount: auction.ticketPrice,
           image:
             auction?.user?.picture &&
             "https://cdn-icons-png.flaticon.com/512/666/666201.png",
-          auctionId: id,
+          eventId: id,
         },
         {
           headers: {
@@ -92,26 +95,26 @@ const Auction = () => {
         }
       );
       if (res.status === 200) {
-        const lastMessage = messages && messages[messages.length - 1];
-        const userAlreadyBidded = messages.find(message => message.uid === user.id);
-        console.log("mmmmmmmmmmm", lastMessage, userAlreadyBidded);
-        if (userAlreadyBidded) {
-          await messagesRef.doc(userAlreadyBidded.id).update({
-            text: bidAmount,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-          });
-        } else {
-          await messagesRef.add({
-            text: bidAmount,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-            uid: user?.id,
-            photoURL:
-              user?.picture ||
-              "https://cdn-icons-png.flaticon.com/512/666/666201.png",
-            displayName: user?.first_name,
-          });
-        }
-        setBidAmount("");
+        // const lastMessage = messages && messages[messages.length - 1];
+        // const userAlreadyBidded = messages.find(message => message.uid === user.id);
+        // console.log("mmmmmmmmmmm", lastMessage, userAlreadyBidded);
+        // if (userAlreadyBidded) {
+        //   await messagesRef.doc(userAlreadyBidded.id).update({
+        //     text: bidAmount,
+        //     createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        //   });
+        // } else {
+        //   await messagesRef.add({
+        //     text: bidAmount,
+        //     createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        //     uid: user?.id,
+        //     photoURL:
+        //       user?.picture ||
+        //       "https://cdn-icons-png.flaticon.com/512/666/666201.png",
+        //     displayName: user?.first_name,
+        //   });
+        // }
+        // setBidAmount("");
         setSubmitDisabled(true);
       } else {
         toastify(res.data.error)
@@ -125,10 +128,43 @@ const Auction = () => {
 
   };
 
+  const donate = async () => {
+
+    console.log("Hewewewewe");
+
+    try {
+      const res = await axios.post(
+        `${apiEndpoint}/events/${id}/donate`,
+        {
+          type: donateTo,
+          amount: donationAmount,
+          userId: user?.id,
+          createdAt: Date.now(),
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        }
+      );
+      if (res.status === 200) {
+        // setSubmitDisabled(true);
+        toastify("Donation Successfull!")
+      } else {
+        toastify(res.data.error);
+      }
+
+      console.log("resssssssssssssssssssssssssssssssssssssssssssssssssssssssss", res);
+
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   const handleAmountChange = (e) => {
     const re = /^[0-9₹\b]+$/;
     if (e.target.value === "" || re.test(e.target.value)) {
-      setBidAmount(e.target.value.replace("₹", ""));
+      setDonationAmount(e.target.value.replace("₹", ""));
     }
     if (parseInt(e.target.value.replace("₹", "")) > (parseInt(messages[messages.length - 1]?.text || auction.basePrice))) {
       if(alreadyBided) {
@@ -143,14 +179,28 @@ const Auction = () => {
 
   const auctionList = async () => {
     try {
-      const res = await axios.post(
-        `${apiEndpoint}/getAllAuctions`
+      const res = await axios.get(
+        `${apiEndpoint}/events/${id}`
       );
-      const auc = res.data.filter((d) => d._id === id)[0];
+      // const auc = res.data.filter((d) => d._id === id)[0];
+      const auc = res.data
       console.log("isAlreadyBided", auc);
       const bidDateTime = new Date(auc.dateTime).getTime();
       setAuctionDateTime(bidDateTime);
       setAuction(auc);
+
+      if(auc.numberOfTickets > auc.eventMembers.length) {
+        setSubmitDisabled(false)
+        // if (user.balance > auc.ticketPrice) {
+        //   setSubmitDisabled(false);
+        // } else {
+        //   setSubmitDisabled(true)
+        // }
+      } else {
+        setSubmitDisabled(true)
+      }
+
+      
 
       const isAlreadyBided = auc.bids.find((b) => b.bidBy._id === user?.id);
       if (isAlreadyBided) {
@@ -181,17 +231,64 @@ const Auction = () => {
         <div className="container mx-auto pt-[106px]">
           {/* Product details section */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-7 items-start mx-6">
-            <div className="p-4 col-span-2 md:col-span-1 bg-white dark:bg-dark rounded-lg outline outline-1 hover:outline-2 outline-gray-300 hover:outline-primary-500 dark:hover:outline-primary-500 dark:outline-gray-800 shadow-outline hover:shadow-hover">
-              <img
-                className="w-full rounded-lg"
-                src={auction?.user?.picture || auction?.game?.picture}
-                alt="craft-image"
-              />
+            <div>
+              <div className="p-4 col-span-2 md:col-span-1 bg-white dark:bg-dark rounded-lg outline outline-1 hover:outline-2 outline-gray-300 hover:outline-primary-500 dark:hover:outline-primary-500 dark:outline-gray-800 shadow-outline hover:shadow-hover">
+                <img
+                  className="w-full rounded-lg"
+                  src={auction?.user?.picture || auction?.game?.picture}
+                  alt="craft-image"
+                />
+              </div>
+              <br />
+              <div className="w-full flex justify-center items-center">
+                <form
+                  onSubmit={donate}
+                  className="flex justify-between items-center"
+                >
+                  <input
+                    type="text"
+                    placeholder="₹1000"
+                    value={`${donationAmount ? "₹" + donationAmount : ""}`}
+                    onChange={(e) => handleAmountChange(e)}
+                    className="input input-bordered w-full max-w-xs"
+                  />
+                  <select
+                    name="donateTo"
+                    className="select select-bordered w-full max-w-xs"
+                    onChange={(e) => setDonateTo(e.target.value)}
+                  >
+                    <option value="host" selected>Host</option>
+                    <option value="Winner">Winner</option>
+                  </select>
+                  <button
+                    class="box-border relative z-30 inline-flex items-center justify-center w-auto px-8 py-3 overflow-hidden font-bold text-white transition-all duration-300 bg-indigo-600 rounded-md cursor-pointer group ring-offset-2 ring-1 ring-indigo-300 ring-offset-indigo-200 hover:ring-offset-indigo-500 ease focus:outline-none"
+                  >
+                    <span class="absolute bottom-0 right-0 w-8 h-20 -mb-8 -mr-5 transition-all duration-300 ease-out transform rotate-45 translate-x-1 bg-white opacity-10 group-hover:translate-x-0"></span>
+                    <span class="absolute top-0 left-0 w-20 h-8 -mt-1 -ml-12 transition-all duration-300 ease-out transform -rotate-45 -translate-x-1 bg-white opacity-10 group-hover:translate-x-0"></span>
+                    <span class="relative z-20 flex items-center text-sm">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        fill="currentColor"
+                        class="bi bi-heart-fill"
+                        viewBox="0 0 16 16"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"
+                        />
+                      </svg>
+                      Donate
+                    </span>
+                  </button>
+                </form>
+              </div>
             </div>
             {/* <SignOut /> */}
             <div className="col-span-2 md:col-span-1 mx-2">
               <p className="text-gray-900 dark:text-white mb-1">
-                Auctions ends in:
+                Tournament ends in:
               </p>
               <div className="mx-auto md:!ml-0 max-w-[284px] w-full h-14 px-4 py-2 flex items-center justify-between bg-white dark:bg-dark border border-gray-300 dark:border-gray-700 rounded-xl">
                 {auctionDateTime && (
@@ -292,12 +389,12 @@ const Auction = () => {
                   <div>
                     <p className="font-normal text-gray-700 dark:text-gray-400 mb-1">
                       {" "}
-                      Base Price:{" "}
+                      Ticket Price:{" "}
                     </p>
                     <div className="flex items-center">
                       <p className="font-medium text-gray-900 dark:text-white">
                         {" "}
-                        ₹{auction && auction?.basePrice}{" "}
+                        ₹{auction && auction?.ticketPrice}{" "}
                       </p>
                     </div>
                   </div>
@@ -316,37 +413,42 @@ const Auction = () => {
                       </h6>
                     </div>
                   ) : null}
-                  {auctionDateTime > new Date().getTime() ? (user?.id != auction?.user?._id ? (
-                    <form onSubmit={bid}>
-                      <div className="block mt-4 w-1/2">
-                        {/* <div className="flex items-center justify-between mb-2">
+                  {auctionDateTime > new Date().getTime() ? (
+                    user?.id != auction?.user?._id ? (
+                      <form onSubmit={bid}>
+                        <div className="block mt-4 w-1/2">
+                          {/* <div className="flex items-center justify-between mb-2">
                       <div className="badge badge-md mr-2">1000</div>
                       <div className="badge badge-md mr-2">1000</div>
                       <div className="badge badge-md mr-2">1000</div>
                       <div className="badge badge-md">1000</div>
                     </div> */}
-                        <input
-                          type="text"
-                          placeholder="₹1000"
-                          value={`${bidAmount ? "₹" + bidAmount : ""}`}
-                          onChange={(e) => handleAmountChange(e)}
-                          className="input input-bordered w-full max-w-xs"
-                        />
-                      </div>
-                      {user ? (
-                        <button
-                          className="btn btn-primary mt-4 px-8"
-                          disabled={submitDisabled}
-                        >
-                          Place a Bid
-                        </button>
-                      ) : (
-                        <Link to="/login" className="btn btn-primary mt-4 px-8">
-                          Login
-                        </Link>
-                      )}
-                    </form>
-                  ): null) : null}
+                          {/* <input
+                            type="text"
+                            placeholder="₹1000"
+                            value={`${bidAmount ? "₹" + bidAmount : ""}`}
+                            onChange={(e) => handleAmountChange(e)}
+                            className="input input-bordered w-full max-w-xs"
+                          /> */}
+                        </div>
+                        {user ? (
+                          <button
+                            className="btn btn-primary mt-4 px-8"
+                            disabled={submitDisabled}
+                          >
+                            Buy a Ticket
+                          </button>
+                        ) : (
+                          <Link
+                            to="/login"
+                            className="btn btn-primary mt-4 px-8"
+                          >
+                            Login
+                          </Link>
+                        )}
+                      </form>
+                    ) : null
+                  ) : null}
                 </div>
 
                 <div id="StarterContent" className="mt-6">
@@ -358,13 +460,13 @@ const Auction = () => {
                   >
                     <div className="grid grid-cols-1">
                       {auction && auction?.status === "ACTIVE" ? (
-                        lastFiveBids &&
-                        lastFiveBids.map((bid) => (
+                        auction.eventMembers &&
+                        auction.eventMembers.map((bid) => (
                           <div className="flex items-center mt-4">
                             <div className="relative inline-block">
                               <img
                                 src={
-                                  bid?.photoURL ||
+                                  bid?.user.picture ||
                                   `https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D&w=1000&q=80`
                                 }
                                 className="h-16 rounded-md"
@@ -374,31 +476,17 @@ const Auction = () => {
                             </div>
                             <div className="ms-3">
                               <h6 className="font-semibold">
-                                ₹{bid?.text}{" "}
+                                ₹{bid?.amount}{" "}
                                 <span className="text-slate-400">by</span>{" "}
                                 <a
                                   href="#"
                                   className="hover:text-violet-600 duration-500 ease-in-out"
                                 >
-                                  {bid.displayName}
+                                  {`${bid?.user?.first_name} ${bid?.user?.last_name}`}
                                 </a>
                               </h6>
                               <span className="text-slate-400 text-[16px]">
-                                {bid.createdAt &&
-                                  moment(
-                                    moment(
-                                      DateTime.fromMillis(
-                                        bid?.createdAt?.seconds * 1000 +
-                                          Math.floor(
-                                            bid?.createdAt?.nanoseconds /
-                                              1000000
-                                          )
-                                      ).toISO()
-                                    )
-                                      .utcOffset("+05:30")
-                                      .format("DDMMYYYY h:mm:ss a"),
-                                    "DDMMYYYY h:mm:ss a"
-                                  ).fromNow()}
+                                {moment(bid?.createdAt).fromNow()}
                               </span>
                             </div>
                           </div>
@@ -453,6 +541,11 @@ const Auction = () => {
           </div>
         </div>
       </div>
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
       <ToastContainer />
       <Footer />
     </div>

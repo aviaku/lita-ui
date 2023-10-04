@@ -152,7 +152,7 @@ const Auction = () => {
             {/* <SignOut /> */}
             <div className="col-span-2 md:col-span-1 mx-2">
               <p className="text-gray-900 dark:text-white mb-1">
-                Auctions ends in:
+                Tournament ends in:
               </p>
               <div className="mx-auto md:!ml-0 max-w-[284px] w-full h-14 px-4 py-2 flex items-center justify-between bg-white dark:bg-dark border border-gray-300 dark:border-gray-700 rounded-xl">
                 {auctionDateTime && (
@@ -250,7 +250,7 @@ const Auction = () => {
                       </p>
                     </div>
                   </div>
-                  <div>
+                  {/* <div>
                     <p className="font-normal text-gray-700 dark:text-gray-400 mb-1">
                       {" "}
                       Base Price:{" "}
@@ -261,7 +261,7 @@ const Auction = () => {
                         ₹{auction && auction?.basePrice}{" "}
                       </p>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
 
                 <div className="mt-7">

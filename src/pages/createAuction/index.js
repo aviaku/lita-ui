@@ -9,18 +9,24 @@ import { toastify } from "../../helpers/toastify";
 import {createAuctionSchema} from './createAuctionSchema'
 import { ToastContainer } from "react-toastify";
 import Header from "../../components/header";
+import Multiselect from "multiselect-react-dropdown";
 
 const initialValues = {
   gameId: "",
-  basePrice: "",
+  numberOfTickets: "",
+  ticketPrice: "",
   dateTime: "",
   description: "",
+  eventMembers: [],
 };
 
 const CreateAuction = () => {
   const { user } = useSelector((state) => ({ ...state }));
   const [dateTime, setDateTime] = useState("")
   const [games, setGames] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [selectedUsers, setSelectedUsers] = useState([]);
+  const [numOfTickets, setNumOfTickets] = useState(0);
 
   const apiEndpoint = process.env.REACT_APP_BACKEND_URL;
   
@@ -61,16 +67,16 @@ const CreateAuction = () => {
       console.log("🚀 ~ file: index.js:36 ~ onSubmit: ~ values:", user)
       
         try {
-          const res = await axios.post(`${apiEndpoint}/createAuction`, data, {
+          const res = await axios.post(`${apiEndpoint}/events`, data, {
             headers: {
               Authorization: `Bearer ${user.token}`,
             },
           });
-          toastify("Auction Created!");
+          toastify("Tournament Created!");
         } catch (error) {
           toastify(error);
         }
-      action.resetForm();
+      // action.resetForm();
     },
   });
 
@@ -87,8 +93,39 @@ const CreateAuction = () => {
     }
   };
 
+  const userList = async () => {
+    try {
+      const res = await axios.get(`${apiEndpoint}/getAllUsers`);
+      setUsers(res.data);
+    } catch (error) {
+      console.log("🚀 ~ file: index.js:26 ~ gameList ~ error:", error);
+    }
+  };
+
+  const onSelect = (selectedList, selectedItem) => {
+    const selectedListArr = selectedList.map((list) => ({
+      amount: 0,
+      user: list._id,
+      createdAt: Date.now(),
+    }));
+    setSelectedUsers(selectedList);
+    values.eventMembers = selectedListArr;
+    console.log(values);
+  };
+
+  const onRemove = (selectedList, removedItem) => {
+    const selectedListArr = selectedList.map((list) => ({
+      amount: 0,
+      user: list._id,
+      createdAt: Date.now(),
+    }));
+    values.eventMembers = selectedListArr;
+    setSelectedUsers(selectedList);
+  };
+
   useEffect(() => {
     gameList();
+    userList();
   }, []);
 
   return (
@@ -110,7 +147,7 @@ const CreateAuction = () => {
             <div className="col-span-2 md:col-span-1 mx-2">
               <form onSubmit={handleSubmit}>
                 <div class="flex flex-wrap justify-between">
-                  <div className="form-control w-full max-w-xs lg:w-6/12 px-2">
+                  <div className="form-control w-full max-w-xs lg:w-[48%] px-2">
                     <label className="label">
                       <span className="label-text">Game</span>
                     </label>
@@ -123,7 +160,7 @@ const CreateAuction = () => {
                       <option disabled selected>
                         Select
                       </option>
-                      {games.map(game => (
+                      {games.map((game) => (
                         <option value={game._id}>{game.name}</option>
                       ))}
                     </select>
@@ -135,28 +172,49 @@ const CreateAuction = () => {
                       </label>
                     ) : null}
                   </div>
-                  <div className="form-control w-full max-w-xs lg:w-6/12 px-2">
+                  <div className="form-control w-full max-w-xs lg:w-[48%] px-2">
                     <label className="label">
-                      <span className="label-text">Base Price</span>
+                      <span className="label-text">Number of Tickets</span>
                     </label>
                     <input
-                      type="text"
-                      placeholder="1000"
-                      name="basePrice"
-                      value={values.basePrice}
+                      type="number"
+                      placeholder="Number of Tickets"
+                      name="numberOfTickets"
+                      value={values.numberOfTickets}
                       onChange={handleChange}
                       onBlur={handleBlur}
                       className="input input-bordered w-full max-w-xs"
                     />
-                    {errors.basePrice && touched.basePrice ? (
+                    {errors.numberOfTickets && touched.numberOfTickets ? (
                       <label className="label">
                         <span className="label-text-alt text-red-500">
-                          {errors.basePrice}
+                          {errors.numberOfTickets}
                         </span>
                       </label>
                     ) : null}
                   </div>
-                  <div className="form-control w-full max-w-xs lg:w-6/12 px-2">
+                  <div className="form-control w-full max-w-xs lg:w-[48%] px-2">
+                    <label className="label">
+                      <span className="label-text">Ticket Price</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="1000"
+                      name="ticketPrice"
+                      value={values.ticketPrice}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      className="input input-bordered w-full max-w-xs"
+                    />
+                    {errors.ticketPrice && touched.ticketPrice ? (
+                      <label className="label">
+                        <span className="label-text-alt text-red-500">
+                          {errors.ticketPrice}
+                        </span>
+                      </label>
+                    ) : null}
+                  </div>
+                  <div className="form-control w-full max-w-xs lg:w-[48%] px-2">
                     <label className="label">
                       <span className="label-text">Date and Time</span>
                     </label>
@@ -165,9 +223,7 @@ const CreateAuction = () => {
                       // handleDateChange={handleDateChange}
                       name="dateTime"
                       selectedDate={values.dateTime}
-                      handleChange={(date) =>
-                        setFieldValue("dateTime", date)
-                      }
+                      handleChange={(date) => setFieldValue("dateTime", date)}
                       handleBlur={handleBlur}
                     />
                     {/* <input
@@ -185,13 +241,35 @@ const CreateAuction = () => {
                       </label>
                     ) : null}
                   </div>
-                  <div className="form-control w-full max-w-xs lg:w-6/12 px-2">
+                  {values.numberOfTickets ? (
+                    <div className="form-control w-full max-w-xs lg:w-[48%] px-2">
+                      <label className="label">
+                        <span className="label-text">Allot Tickets to</span>
+                      </label>
+                      <Multiselect
+                        options={users} // Options to display in the dropdown
+                        // selectedValues={this.state.selectedValue} // Preselected value to persist in dropdown
+                        onSelect={onSelect} // Function will trigger on select event
+                        onRemove={onRemove} // Function will trigger on remove event
+                        displayValue="username" // Property name to display in the dropdown options
+                        showCheckbox={false}
+                      />
+                      {errors.ticketPrice && touched.ticketPrice ? (
+                        <label className="label">
+                          <span className="label-text-alt text-red-500">
+                            {errors.ticketPrice}
+                          </span>
+                        </label>
+                      ) : null}
+                    </div>
+                  ) : null}
+                  <div className="form-control w-full max-w-xs lg:w-[48%] px-2">
                     <label className="label">
                       <span className="label-text">Description</span>
                     </label>
                     <textarea
                       placeholder="Description"
-                      style={{height: "150px"}}
+                      style={{ height: "150px" }}
                       name="description"
                       value={values.description}
                       onChange={handleChange}

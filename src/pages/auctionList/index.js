@@ -59,12 +59,11 @@ const handleReset = () => {
         console.log("🚀 ~ file: index.js:17 ~ auctions ~ res:", res);
         setAuctions(res.data.docs);
       } else {
-      const res = await axios.post(
-        `${apiEndpoint}/getActiveAuctions`,
-        { status: "ACTIVE" }
+      const res = await axios.get(
+        `${apiEndpoint}/events?status=ACTIVEE`
       );
       console.log("🚀 ~ file: index.js:17 ~ auctions ~ res:", res);
-      setAuctions(res.data);
+      setAuctions(res.data.docs);
       }
     } catch (error) {
       console.log("🚀 ~ file: index.js:26 ~ gameList ~ error:", error);
