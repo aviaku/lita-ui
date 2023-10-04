@@ -242,6 +242,7 @@ const Auction = () => {
               </div>
               <br />
               <div className="w-full flex justify-center items-center">
+                {user ? (
                 <form
                   onSubmit={donate}
                   className="flex justify-between items-center"
@@ -262,7 +263,7 @@ const Auction = () => {
                     <option value="host" selected>
                       Host
                     </option>
-                    <option value="Winner">Winner</option>
+                    <option value="winner">Winner</option>
                   </select>
                   <button class="box-border relative z-30 inline-flex items-center justify-center w-auto px-8 py-3 overflow-hidden font-bold text-white transition-all duration-300 bg-indigo-600 rounded-md cursor-pointer group ring-offset-2 ring-1 ring-indigo-300 ring-offset-indigo-200 hover:ring-offset-indigo-500 ease focus:outline-none">
                     <span class="absolute bottom-0 right-0 w-8 h-20 -mb-8 -mr-5 transition-all duration-300 ease-out transform rotate-45 translate-x-1 bg-white opacity-10 group-hover:translate-x-0"></span>
@@ -285,6 +286,11 @@ const Auction = () => {
                     </span>
                   </button>
                 </form>
+                ) : (
+                <Link to="/login" className="btn btn-primary mt-4 px-8">
+                  Login to Donate
+                </Link>
+                )}
               </div>
               <br />
               <div>
@@ -480,7 +486,7 @@ const Auction = () => {
                             to="/login"
                             className="btn btn-primary mt-4 px-8"
                           >
-                            Login
+                            Login to Buy Ticket
                           </Link>
                         )}
                       </form>
