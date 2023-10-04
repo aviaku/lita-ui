@@ -49,7 +49,7 @@ const Card7 = ({_id, basePrice, status, dateTime, game, user, bids, handleDelete
           }}
           className="w-full linear rounded-[10px] hover:translate-y-1 hover:shadow-md bg-gradient-to-b from-yellow-200 to-yellow-300 hover:to-red-300 active:from-yellow-400 focus:from-red-400 px-4 py-2 text-base font-medium transition duration-200"
         >
-          Cancel Auction
+          Cancel Event
         </button>) : (
           <button
           disabled

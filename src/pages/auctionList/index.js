@@ -59,8 +59,9 @@ const handleReset = () => {
         console.log("🚀 ~ file: index.js:17 ~ auctions ~ res:", res);
         setAuctions(res.data.docs);
       } else {
-      const res = await axios.get(
-        `${apiEndpoint}/events?status=ACTIVEE`
+      const res = await axios.post(
+        `${apiEndpoint}/getAllEvents`,
+        {status: "ACTIVE"}
       );
       console.log("🚀 ~ file: index.js:17 ~ auctions ~ res:", res);
       setAuctions(res.data.docs);

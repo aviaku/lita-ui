@@ -202,7 +202,7 @@ const Auction = () => {
 
       
 
-      const isAlreadyBided = auc.bids.find((b) => b.bidBy._id === user?.id);
+      const isAlreadyBided = auc.eventMembers.find((b) => b.user._id === user?.id);
       if (isAlreadyBided) {
         setAlreadyBided(true)
       }
@@ -434,7 +434,7 @@ const Auction = () => {
                         {user ? (
                           <button
                             className="btn btn-primary mt-4 px-8"
-                            disabled={submitDisabled}
+                            disabled={submitDisabled || alreadyBided}
                           >
                             Buy a Ticket
                           </button>

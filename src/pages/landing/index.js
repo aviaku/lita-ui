@@ -84,12 +84,12 @@ export default function Landing({ setVisible, posts, loading, getAllPosts }) {
 
   const auctionList = async () => {
     try {
-      const res = await axios.post(
-        `${apiEndpoint}/getActiveAuctions`,
-        { status: "ACTIVE" }
+      const res = await axios.get(
+        `${apiEndpoint}/events`,
+        // { status: "ACTIVE" }
       );
       console.log("🚀 ~ file: index.js:17 ~ auctions ~ res:", res);
-      setAuctions(res.data);
+      setAuctions(res.data.docs);
     } catch (error) {
       console.log("🚀 ~ file: index.js:26 ~ gameList ~ error:", error);
     }

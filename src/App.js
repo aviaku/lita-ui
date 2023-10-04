@@ -27,6 +27,8 @@ import MyBids from "./pages/myBids";
 import AboutPage from "./pages/about";
 import FAQPage from "./pages/faq";
 import PrivacyPolicyPage from "./pages/privacyPolicy";
+import Payment from "./pages/payment/Payment";
+import Completion from "./pages/payment/Completion";
 
 function App() {
   const [visible, setVisible] = useState(false);
@@ -136,6 +138,8 @@ function App() {
         <Route path="/admin/createBanner" element={<CreateBanner />} exact />
         <Route path="/about" element={<AboutPage />} exact />
         <Route path="/faq" element={<FAQPage />} exact />
+        <Route path="/payment" element={<Payment />} exact />
+        <Route path="/completion" element={<Completion />} exact />
         <Route path="/privacyPolicy" element={<PrivacyPolicyPage />} exact />
         <Route path="/reset" element={<Reset />} />
         <Route

@@ -18,8 +18,8 @@ const MyAuctions = () => {
   const handleDelete = async (_id) => {
     try {
       const res = await axios.put(
-        `${apiEndpoint}/auctions/cancel/${_id}`,
-        {user: {userId: _id}},
+        `${apiEndpoint}/events/cancel/${_id}`,
+        // { user: { userId: _id } },
         {
           headers: {
             Authorization: `Bearer ${user.token}`,
@@ -44,7 +44,7 @@ const MyAuctions = () => {
         }
       );
       console.log("🚀 ~ file: index.js:17 ~ games ~ res:", res);
-      setAuctions(res.data);
+      setAuctions(res.data.createdEvents);
     } catch (error) {
       console.log("🚀 ~ file: index.js:26 ~ gameList ~ error:", error);
     }
