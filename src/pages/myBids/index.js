@@ -15,7 +15,7 @@ const MyBids = () => {
   const auctionList = async (queryString = null) => {
     try {
         const res = await axios.get(
-          `${apiEndpoint}/auctions/my-bids/${user?.id}`,
+          `${apiEndpoint}/events/my-events/${user?.id}`,
           {
             headers: {
               Authorization: `Bearer ${user.token}`,
@@ -23,7 +23,7 @@ const MyBids = () => {
           }
         );
         console.log("🚀 ~ file: index.js:17 ~ auctions ~ res:", res);
-        setAuctions(res.data);
+        setAuctions(res.data.eventMemberships);
     } catch (error) {
       console.log("🚀 ~ file: index.js:26 ~ gameList ~ error:", error);
     }

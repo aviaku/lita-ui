@@ -18,6 +18,8 @@ const initialValues = {
   dateTime: "",
   description: "",
   eventMembers: [],
+  percentageDivisionMode: "",
+  isAuctionTicket: "false"
 };
 
 const CreateAuction = () => {
@@ -27,6 +29,8 @@ const CreateAuction = () => {
   const [users, setUsers] = useState([]);
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [numOfTickets, setNumOfTickets] = useState(0);
+  const [percentageDivision, setPercentageDivision] = useState([]);
+  const [errorMsg, setErrorMsg] = useState([]);
 
   const apiEndpoint = process.env.REACT_APP_BACKEND_URL;
   
@@ -42,6 +46,17 @@ const CreateAuction = () => {
     initialValues: initialValues,
     validationSchema: createAuctionSchema,
     onSubmit: async (values, action) => {
+
+      var sum = percentageDivision.reduce((accumulator, currentValue) => {
+        return parseInt(accumulator) + parseInt(currentValue);
+      }, 0);
+
+      console.log(sum);
+      if (sum !== 100) { 
+        return setErrorMsg("Sum of share percentage must be 100!");
+      } else {
+        setErrorMsg("");
+      }
 
       const getGames = await axios.get(`${apiEndpoint}/getAllGames`);
 
@@ -63,8 +78,13 @@ const CreateAuction = () => {
         game: values.gameId,
         gender: user.gender,
         isActive: true,
+        isAuctionTicket: values.isAuctionTicket === "false" ? false : true,
+        rankingPercentages: percentageDivision.map((p, i) => {
+          // let j = i + 1;
+          return {ranking: i + 1, percentage: parseInt(p)}
+        })
       };
-      console.log("🚀 ~ file: index.js:36 ~ onSubmit: ~ values:", user)
+      console.log("🚀 ~ file: index.js:36 ~ onSubmit: ~ values:", data)
       
         try {
           const res = await axios.post(`${apiEndpoint}/events`, data, {
@@ -122,6 +142,26 @@ const CreateAuction = () => {
     values.eventMembers = selectedListArr;
     setSelectedUsers(selectedList);
   };
+
+  const handlePercentageDivision = (e) => {
+    console.log(e.target.name, e.target.value);
+    const rankPosition = e.target.name.split('_')[1];
+    if (rankPosition !== -1) {
+      const percentageDivisionArr = percentageDivision;
+      percentageDivisionArr[rankPosition] = e.target.value
+      setPercentageDivision([...percentageDivisionArr])
+    }
+    // const oldPercentageDivision = [...percentageDivision]
+    // if(percentageDivision[rankPosition]) {
+    // setPercentageDivision(percentageDivision.splice(rankPosition, 0))
+    // }
+    // setPercentageDivision(percentageDivision.splice(rankPosition, 0, e.target.value));
+    // setPercentageDivision([
+    //   ...percentageDivision,
+    //   e.target.value,
+    // ]);
+    console.log(percentageDivision, rankPosition);
+  }
 
   useEffect(() => {
     gameList();
@@ -183,6 +223,7 @@ const CreateAuction = () => {
                       value={values.numberOfTickets}
                       onChange={handleChange}
                       onBlur={handleBlur}
+                      onWheel={(e) => e.target.blur()}
                       className="input input-bordered w-full max-w-xs"
                     />
                     {errors.numberOfTickets && touched.numberOfTickets ? (
@@ -241,6 +282,30 @@ const CreateAuction = () => {
                       </label>
                     ) : null}
                   </div>
+                  <div className="form-control w-full max-w-xs lg:w-[48%] px-2">
+                    <label className="label">
+                      <span className="label-text">Ticket Selling Type</span>
+                    </label>
+                    <select
+                      className="select select-bordered"
+                      name="isAuctionTicket"
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                    >
+                      <option value={false} selected>
+                        Direct Selling
+                      </option>
+                      <option value={true}>Auction</option>
+                    </select>
+                    {errors.isAuctionTicket &&
+                    touched.isAuctionTicket ? (
+                      <label className="label">
+                        <span className="label-text-alt text-red-500">
+                          {errors.isAuctionTicket}
+                        </span>
+                      </label>
+                    ) : null}
+                  </div>
                   {values.numberOfTickets ? (
                     <div className="form-control w-full max-w-xs lg:w-[48%] px-2">
                       <label className="label">
@@ -284,6 +349,64 @@ const CreateAuction = () => {
                       </label>
                     ) : null}
                   </div>
+                  <div className="form-control w-full max-w-xs lg:w-[48%] px-2">
+                    <label className="label">
+                      <span className="label-text">Prize Distribution</span>
+                    </label>
+                    <select
+                      className="select select-bordered"
+                      name="percentageDivisionMode"
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                    >
+                      <option value="not_divided" selected>
+                        Not Divided
+                      </option>
+                      <option value="same">Equaly Divided</option>
+                      <option value="ranking">Ranking Wise</option>
+                      {/* <option value="different">Custom</option> */}
+                    </select>
+                    {errors.percentageDivisionMode &&
+                    touched.percentageDivisionMode ? (
+                      <label className="label">
+                        <span className="label-text-alt text-red-500">
+                          {errors.percentageDivisionMode}
+                        </span>
+                      </label>
+                    ) : null}
+                  </div>
+                  {values.percentageDivisionMode === "ranking" &&
+                    values.numberOfTickets && (
+                      <div className="form-control w-full max-w-xs lg:w-[48%] px-2">
+                        <label className="label">
+                          <span className="label-text">Number of Tickets</span>
+                        </label>
+                        {[...Array(values.numberOfTickets)].map((e, i) => (
+                          <input
+                            type="number"
+                            name={`playerPercentage_${[i]}`}
+                            // value={values.numberOfTickets}
+                            placeholder={`Rank ${i + 1} share`}
+                            // onChange={(e) => handlePercentageDivision(e)}
+                            onBlur={(e) => handlePercentageDivision(e)}
+                            className="input input-bordered w-full max-w-xs"
+                            onWheel={(e) => e.target.blur()}
+                            required
+                          />
+                        ))}
+
+                        {errors.numberOfTickets && touched.numberOfTickets ? (
+                          <label className="label">
+                            <span className="label-text-alt text-red-500">
+                              {errors.numberOfTickets}
+                            </span>
+                          </label>
+                        ) : null}
+                      </div>
+                    )}
+                  {errorMsg && (
+                    <p className="text-red-700 font-semibold">{errorMsg}</p>
+                  )}
                   <br />
                   <br />
                   <div className="w-full mt-4">
