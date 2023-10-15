@@ -46,8 +46,7 @@ import Header from "../../components/header";
 // }
 
 const Auction = () => {
-
-  const {id} = useParams();
+  const { id } = useParams();
 
   const apiEndpoint = process.env.REACT_APP_BACKEND_URL;
 
@@ -60,15 +59,18 @@ const Auction = () => {
   const [auction, setAuction] = useState(null);
   const [donateTo, setDonateTo] = useState("host");
   const [highestBid, setHighestBid] = useState([]);
-  const [submitDisabled, setSubmitDisabled] = useState(true)
+  const [submitDisabled, setSubmitDisabled] = useState(true);
   const [auctionDateTime, setAuctionDateTime] = useState(null);
   const [alreadyBided, setAlreadyBided] = useState(false);
   const [resultRanking, setResultRanking] = useState([]);
   const [screenshotValue, setScreenshotValue] = useState([]);
   const [disputeScreenshotValue, setDisputeScreenshotValue] = useState([]);
   const [raiseDispute, setRaiseDispute] = useState(false);
+  const [disputeMessage, setDisputeMessage] = useState("");
+  const [disputeType, setDisputeType] = useState("");
   const [resultSubmitBtnDisabled, setResultSubmitBtnDisabled] = useState(false);
-  const [disputeSubmitBtnDisabled, setDisputeSubmitBtnDisabled] = useState(false);
+  const [disputeSubmitBtnDisabled, setDisputeSubmitBtnDisabled] =
+    useState(false);
   const messagesRef = firestore.collection(id);
   const query = messagesRef.orderBy("createdAt").limit(25);
 
@@ -105,7 +107,9 @@ const Auction = () => {
       );
       if (res.status === 200) {
         const lastMessage = messages && messages[messages.length - 1];
-        const userAlreadyBidded = messages.find(message => message.uid === user.id);
+        const userAlreadyBidded = messages.find(
+          (message) => message.uid === user.id
+        );
         console.log("mmmmmmmmmmm", lastMessage, userAlreadyBidded);
         if (userAlreadyBidded) {
           await messagesRef.doc(userAlreadyBidded.id).update({
@@ -126,15 +130,16 @@ const Auction = () => {
         setBidAmount("");
         setSubmitDisabled(true);
       } else {
-        toastify(res.data.error)
+        toastify(res.data.error);
       }
 
-      console.log("resssssssssssssssssssssssssssssssssssssssssssssssssssssssss", res);
-
+      console.log(
+        "resssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
+        res
+      );
     } catch (error) {
       console.log(error);
     }
-
   };
 
   const donate = async (e) => {
@@ -148,7 +153,7 @@ const Auction = () => {
         {
           type: donateTo,
           amount: parseInt(donationAmount),
-          messages: donationMessage,
+          message: donationMessage,
           userId: user?.id,
           createdAt: Date.now(),
         },
@@ -160,17 +165,19 @@ const Auction = () => {
       );
       if (res.status === 200) {
         // setSubmitDisabled(true);
-        toastify("Donation Successfull!")
+        toastify("Donation Successfull!");
       } else {
         toastify(res.data.error);
       }
 
-      console.log("resssssssssssssssssssssssssssssssssssssssssssssssssssssssss", res);
-
+      console.log(
+        "resssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
+        res
+      );
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   const handleAmountChange = (e) => {
     const re = /^[0-9₹\b]+$/;
@@ -178,15 +185,15 @@ const Auction = () => {
       setDonationAmount(e.target.value.replace("₹", ""));
     }
     // if (parseInt(e.target.value.replace("₹", "")) > (parseInt(messages[messages.length - 1]?.text || auction.basePrice))) {
-      // if(alreadyBided) {
-      //   setSubmitDisabled(true)
-      // } else {
-      // setSubmitDisabled(false);
-      // }
+    // if(alreadyBided) {
+    //   setSubmitDisabled(true)
+    // } else {
+    // setSubmitDisabled(false);
+    // }
     // } else {
     //   setSubmitDisabled(true)
     // }
-  }
+  };
 
   const handleBidAmountChange = (e) => {
     const re = /^[0-9₹\b]+$/;
@@ -209,36 +216,34 @@ const Auction = () => {
 
   const auctionList = async () => {
     try {
-      const res = await axios.get(
-        `${apiEndpoint}/events/${id}`
-      );
+      const res = await axios.get(`${apiEndpoint}/events/${id}`);
       // const auc = res.data.filter((d) => d._id === id)[0];
-      const auc = res.data
-      console.log("isAlreadyBided", auc);
+      const auc = res.data;
+      if (auc.reUploadResult) setIsMatchEnded(true);
       const bidDateTime = new Date(auc.dateTime).getTime();
       setAuctionDateTime(bidDateTime);
       setAuction(auc);
 
-      if(auc.numberOfTickets > auc.eventMembers.length) {
-        setSubmitDisabled(false)
+      if (auc.numberOfTickets > auc.eventMembers.length) {
+        setSubmitDisabled(false);
         // if (user.balance > auc.ticketPrice) {
         //   setSubmitDisabled(false);
         // } else {
         //   setSubmitDisabled(true)
         // }
       } else {
-        setSubmitDisabled(true)
+        setSubmitDisabled(true);
       }
 
-      
-
-      const isAlreadyBided = auc.eventMembers.find((b) => b.user._id === user?.id);
+      const isAlreadyBided = auc.eventMembers.find(
+        (b) => b.user._id === user?.id
+      );
       if (isAlreadyBided) {
-        setAlreadyBided(true)
+        setAlreadyBided(true);
       }
 
-      const topBid = Math.max(...auc.bids.map(o => o.x))
-      setHighestBid(topBid)
+      const topBid = Math.max(...auc.bids.map((o) => o.x));
+      setHighestBid(topBid);
     } catch (error) {
       console.log("🚀 ~ file: index.js:26 ~ gameList ~ error:", error);
     }
@@ -248,10 +253,10 @@ const Auction = () => {
     const position = e.target.name.split("_")[1];
     const userId = e.target.name.split("_")[2];
     const resultRankingArr = resultRanking;
-    resultRankingArr[position] = {userId, ranking: e.target.value};
-    setResultRanking([...resultRankingArr])
+    resultRankingArr[position] = { userId, ranking: e.target.value };
+    setResultRanking([...resultRankingArr]);
     console.log(resultRanking);
-  }
+  };
 
   const handleResultSubmit = async (e) => {
     e.preventDefault();
@@ -280,16 +285,17 @@ const Auction = () => {
           },
         }
       );
-      if(res.status === 200) {
+      if (res.status === 200) {
         setResultSubmitBtnDisabled(false);
       }
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   const handleDisputeSubmit = async (e) => {
     e.preventDefault();
+    // return console.log("hi")
     setDisputeSubmitBtnDisabled(true);
     const formData = new FormData();
     // return console.log(screenshotValue);
@@ -302,11 +308,13 @@ const Auction = () => {
       );
       const data = {
         userId: user.id,
-        screenshotUrl: picRes.data.secure_url,
+        image: picRes.data.secure_url,
+        message: disputeMessage,
+        type: disputeType,
       };
       console.log(data);
       const res = await axios.post(
-        `${apiEndpoint}/events/${id}/rankings`,
+        `${apiEndpoint}/events/${id}/disputes`,
         data,
         {
           headers: {
@@ -316,6 +324,7 @@ const Auction = () => {
       );
       if (res.status === 200) {
         setDisputeSubmitBtnDisabled(false);
+        console.log(res);
       }
     } catch (error) {
       console.log(error);
@@ -323,14 +332,14 @@ const Auction = () => {
   };
 
   useEffect(() => {
-      auctionList();
-  }, [])
+    auctionList();
+  }, []);
 
   const THREE_DAYS_IN_MS = 3 * 24 * 60 * 60 * 1000;
   const NOW_IN_MS = new Date().getTime();
 
   const dateTimeAfterThreeDays = NOW_IN_MS + THREE_DAYS_IN_MS;
-// return "Hi"
+  // return "Hi"
   return (
     <div>
       {/* <Nav /> */}
@@ -662,7 +671,7 @@ const Auction = () => {
                       <div className="flex justify-between items-center">
                         <h2 className="text-2xl font-semibold">Participants</h2>
                         {auction &&
-                          auction?.status === "IN-PROGRESS" &&
+                          auction?.status === "IN_PROGRESS" &&
                           auction?.user?._id === user.id && (
                             <div className="flex justify-between items-center">
                               <label htmlFor="matchEnded">Match Ended?</label>
@@ -682,64 +691,13 @@ const Auction = () => {
                         auction && auction?.status === "ACTIVE" ? (
                           lastFiveBids &&
                           lastFiveBids.map((bid) => (
-                            <div className="flex items-center mt-4">
-                              <div className="flex items-center">
-                                <div className="relative inline-block">
-                                  <img
-                                    src={
-                                      bid?.photoURL ||
-                                      `https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D&w=1000&q=80`
-                                    }
-                                    className="h-16 rounded-md"
-                                    alt=""
-                                  />
-                                  <i className="mdi mdi-check-decagram text-emerald-600 text-lg absolute -top-2 -end-2" />
-                                </div>
-                              </div>
-                              <div className="ms-3">
-                                <h6 className="font-semibold">
-                                  ₹{bid?.text}{" "}
-                                  <span className="text-slate-400">by</span>{" "}
-                                  <a
-                                    href="#"
-                                    className="hover:text-violet-600 duration-500 ease-in-out"
-                                  >
-                                    {bid.displayName}
-                                  </a>
-                                </h6>
-                                <span className="text-slate-400 text-[16px]">
-                                  {bid.createdAt &&
-                                    moment(
-                                      moment(
-                                        DateTime.fromMillis(
-                                          bid?.createdAt?.seconds * 1000 +
-                                            Math.floor(
-                                              bid?.createdAt?.nanoseconds /
-                                                1000000
-                                            )
-                                        ).toISO()
-                                      )
-                                        .utcOffset("+05:30")
-                                        .format("DDMMYYYY h:mm:ss a"),
-                                      "DDMMYYYY h:mm:ss a"
-                                    ).fromNow()}
-                                </span>
-                              </div>
-                            </div>
-                          ))
-                        ) : auction && auction?.status === "EXPIRED" ? (
-                          <AuctionResult bids={auction.eligibleBids} />
-                        ) : null
-                      ) : auction ? (
-                        auction?.eventMembers && (
-                          <form onSubmit={handleResultSubmit}>
-                            {auction?.eventMembers.map((bid, i) => (
-                              <div className="flex items-center justify-between mt-4">
+                            <>
+                              <div className="flex items-center mt-4">
                                 <div className="flex items-center">
                                   <div className="relative inline-block">
                                     <img
                                       src={
-                                        bid?.user.picture ||
+                                        bid?.photoURL ||
                                         `https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D&w=1000&q=80`
                                       }
                                       className="h-16 rounded-md"
@@ -747,165 +705,262 @@ const Auction = () => {
                                     />
                                     <i className="mdi mdi-check-decagram text-emerald-600 text-lg absolute -top-2 -end-2" />
                                   </div>
-                                  <div className="ms-3">
-                                    <h6 className="font-semibold">
-                                      ₹{bid?.amount}{" "}
-                                      <span className="text-slate-400">by</span>{" "}
-                                      <a
-                                        href="#"
-                                        className="hover:text-violet-600 duration-500 ease-in-out"
-                                      >
-                                        {`${bid?.user?.first_name} ${bid?.user?.last_name}`}
-                                      </a>
-                                    </h6>
-                                    <span className="text-slate-400 text-[16px]">
-                                      {moment(bid?.createdAt).fromNow()}
-                                    </span>
-                                  </div>
                                 </div>
-                                {(isMatchEnded ||
-                                  auction.rankingsScreenshotUrl) && (
-                                  <>
-                                    {!auction.rankingsScreenshotUrl ? (
-                                      <input
-                                        className="input input-bordered w-full max-w-xs"
-                                        type="number"
-                                        name={`player_${[i]}_${[bid.user._id]}`}
-                                        onWheel={(e) => e.target.blur()}
-                                        onBlur={(e) => handleRankChange(e)}
-                                      />
-                                    ) : (
-                                      <h6 className="font-semibold">
-                                        Rank {bid?.ranking}
-                                      </h6>
-                                    )}
-                                  </>
-                                )}
-                              </div>
-                            ))}
-                            <br />
-                            <br />
-                            {(isMatchEnded ||
-                              auction.rankingsScreenshotUrl) && (
-                              <div>
-                                {!auction.rankingsScreenshotUrl ? (
-                                  <>
-                                    <div className="flex justify-between items-center">
-                                      <label>Result Screenshot</label>
-                                      <input
-                                        type="file"
-                                        name="screenshot"
-                                        onChange={(event) =>
-                                          setScreenshotValue(
-                                            event.target.files[0]
-                                          )
-                                        }
-                                        placeholder="Game Image"
-                                        className="file-input file-input-bordered w-full max-w-xs"
-                                      />
-                                    </div>
-                                    <button
-                                      class="btn btn-primary mt-4 px-8"
-                                      disabled={resultSubmitBtnDisabled}
+                                <div className="ms-3">
+                                  <h6 className="font-semibold">
+                                    ₹{bid?.text}{" "}
+                                    <span className="text-slate-400">by</span>{" "}
+                                    <a
+                                      href="#"
+                                      className="hover:text-violet-600 duration-500 ease-in-out"
                                     >
-                                      Submit
-                                    </button>
-                                  </>
-                                ) : (
-                                  <>
-                                    <h1 className="text-2xl font-semibold">
-                                      Result
-                                    </h1>
-                                    <div className="p-4 col-span-2 md:col-span-1 bg-white dark:bg-dark rounded-lg outline outline-1 hover:outline-2 outline-gray-300 hover:outline-primary-500 dark:hover:outline-primary-500 dark:outline-gray-800 shadow-outline hover:shadow-hover">
-                                      <img
-                                        className="w-full rounded-lg"
-                                        src={auction.rankingsScreenshotUrl}
-                                        alt="Result Screenshot"
-                                      />
-                                    </div>
-                                  </>
-                                )}
+                                      {bid.displayName}
+                                    </a>
+                                  </h6>
+                                  <span className="text-slate-400 text-[16px]">
+                                    {bid.createdAt &&
+                                      moment(
+                                        moment(
+                                          DateTime.fromMillis(
+                                            bid?.createdAt?.seconds * 1000 +
+                                              Math.floor(
+                                                bid?.createdAt?.nanoseconds /
+                                                  1000000
+                                              )
+                                          ).toISO()
+                                        )
+                                          .utcOffset("+05:30")
+                                          .format("DDMMYYYY h:mm:ss a"),
+                                        "DDMMYYYY h:mm:ss a"
+                                      ).fromNow()}
+                                  </span>
+                                </div>
+                              </div>
+                            </>
+                          ))
+                        ) : auction && auction?.status === "COMPLETED" ? (
+                          <AuctionResult bids={auction.eligibleBids} />
+                        ) : null
+                      ) : auction ? (
+                        auction?.eventMembers && (
+                          <>
+                            {console.log("Hiiiii", auction?.reUploadResult)}
+                            {auction && auction?.reUploadResult && (
+                              <div className="text-red-500">
+                                You have to reupload the result
                               </div>
                             )}
-                            <br />
-                            <br />
-                            {auction?.eventMembers.some(
-                              (member) => member?.user?._id === user.id
-                            ) && (
-                              <form onSubmit={handleDisputeSubmit}>
-                              <div className="p-4 col-span-2 md:col-span-1 bg-white dark:bg-dark rounded-lg outline outline-1 hover:outline-2 outline-gray-300 hover:outline-primary-500 dark:hover:outline-primary-500 dark:outline-gray-800 shadow-outline hover:shadow-hover text-center">
-                                <div className="flex text-center justify-center border rounded p-3">
-                                  <div
-                                    className="flex items-center"
-                                    htmlFor="validateResult1"
-                                  >
-                                    <input
-                                      type="radio"
-                                      id="validateResult1"
-                                      name="validateResult"
-                                      value={false}
-                                      checked={raiseDispute === false}
-                                      onChange={() => setRaiseDispute(false)}
-                                      className="radio"
-                                    />
-                                    <label>Result is true</label>
-                                  </div>
-                                  <div
-                                    className="flex items-center"
-                                    htmlFor="validateResult2"
-                                  >
-                                    <input
-                                      type="radio"
-                                      id="validateResult2"
-                                      name="validateResult"
-                                      value={true}
-                                      checked={raiseDispute === true}
-                                      onChange={() => setRaiseDispute(true)}
-                                      className="radio"
-                                    />
-                                    <label>Raise a dispute</label>
-                                  </div>
-                                </div>
-                                <br />
-                                {raiseDispute ? (
-                                  <>
-                                    <div className="mb-3">
-                                      <label className="block">
-                                        Upload result screenshot
-                                      </label>
-                                      <input
-                                        type="file"
-                                        name="disputeScreenshot"
-                                        onChange={(event) =>
-                                          setDisputeScreenshotValue(
-                                            event.target.files[0]
-                                          )
+                            <form onSubmit={handleResultSubmit}>
+                              {auction?.eventMembers.map((bid, i) => (
+                                <div className="flex items-center justify-between mt-4">
+                                  <div className="flex items-center">
+                                    <div className="relative inline-block">
+                                      <img
+                                        src={
+                                          bid?.user.picture ||
+                                          `https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D&w=1000&q=80`
                                         }
-                                        className="file-input file-input-bordered w-full max-w-xs"
+                                        className="h-16 rounded-md"
+                                        alt=""
                                       />
+                                      <i className="mdi mdi-check-decagram text-emerald-600 text-lg absolute -top-2 -end-2" />
                                     </div>
-                                    <hr />
-                                  </>
-                                ) : (
-                                  <></>
-                                )}
-                                {console.log("aaaaaaaa", raiseDispute)}
-                                <div className="flex mt-3">
-                                  <button
-                                    class="box-border mx-auto relative z-30 ml-auto inline-flex items-center justify-center w-auto px-8 py-3 overflow-hidden font-bold text-white transition-all duration-300 bg-indigo-600 rounded-md cursor-pointer group ring-offset-2 ring-1 ring-indigo-300 ring-offset-indigo-200 hover:ring-offset-indigo-500 ease focus:outline-none"
-                                    disabled={disputeSubmitBtnDisabled}
-                                  >
-                                    <span class="absolute bottom-0 right-0 w-8 h-20 -mb-8 -mr-5 transition-all duration-300 ease-out transform rotate-45 translate-x-1 bg-white opacity-10 group-hover:translate-x-0"></span>
-                                    <span class="absolute top-0 left-0 w-20 h-8 -mt-1 -ml-12 transition-all duration-300 ease-out transform -rotate-45 -translate-x-1 bg-white opacity-10 group-hover:translate-x-0"></span>
-                                    <span class="relative z-20 flex items-center text-sm">
-                                      Submit
-                                    </span>
-                                  </button>
+                                    <div className="ms-3">
+                                      <h6 className="font-semibold">
+                                        ₹{bid?.amount}{" "}
+                                        <span className="text-slate-400">
+                                          by
+                                        </span>{" "}
+                                        <a
+                                          href="#"
+                                          className="hover:text-violet-600 duration-500 ease-in-out"
+                                        >
+                                          {`${bid?.user?.first_name} ${bid?.user?.last_name}`}
+                                        </a>
+                                      </h6>
+                                      <span className="text-slate-400 text-[16px]">
+                                        {moment(bid?.createdAt).fromNow()}
+                                      </span>
+                                    </div>
+                                  </div>
+                                  {(isMatchEnded ||
+                                    auction?.rankingsScreenshotUrl) && (
+                                    <>
+                                      {!auction?.rankingsScreenshotUrl ||
+                                      auction?.reUploadResult ? (
+                                        <input
+                                          className="input input-bordered w-full max-w-xs"
+                                          type="number"
+                                          name={`player_${[i]}_${[
+                                            bid.user._id,
+                                          ]}`}
+                                          onWheel={(e) => e.target.blur()}
+                                          onBlur={(e) => handleRankChange(e)}
+                                        />
+                                      ) : (
+                                        <h6 className="font-semibold">
+                                          Rank {bid?.ranking}
+                                        </h6>
+                                      )}
+                                    </>
+                                  )}
                                 </div>
-                              </div>
+                              ))}
+                              <br />
+                              <br />
+                              {(isMatchEnded ||
+                                auction.rankingsScreenshotUrl) && (
+                                <div>
+                                  {!auction.rankingsScreenshotUrl ? (
+                                    <>
+                                      <div className="flex justify-between items-center">
+                                        <label>Result Screenshot</label>
+                                        <input
+                                          type="file"
+                                          name="screenshot"
+                                          onChange={(event) =>
+                                            setScreenshotValue(
+                                              event.target.files[0]
+                                            )
+                                          }
+                                          placeholder="Game Image"
+                                          className="file-input file-input-bordered w-full max-w-xs"
+                                        />
+                                      </div>
+                                      <button
+                                        class="btn btn-primary mt-4 px-8"
+                                        disabled={resultSubmitBtnDisabled}
+                                      >
+                                        Submit
+                                      </button>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <h1 className="text-2xl font-semibold">
+                                        Result
+                                      </h1>
+                                      <div className="p-4 col-span-2 md:col-span-1 bg-white dark:bg-dark rounded-lg outline outline-1 hover:outline-2 outline-gray-300 hover:outline-primary-500 dark:hover:outline-primary-500 dark:outline-gray-800 shadow-outline hover:shadow-hover">
+                                        <img
+                                          className="w-full rounded-lg"
+                                          src={auction.rankingsScreenshotUrl}
+                                          alt="Result Screenshot"
+                                        />
+                                      </div>
+                                    </>
+                                  )}
+                                </div>
+                              )}
+                              <br />
+                              <br />
+                            </form>
+                            {(auction?.eventMembers.some(
+                              (member) => member?.user?._id === user.id
+                            ) ||
+                              auction?.donations.some(
+                                (member) => member?.user?._id === user.id
+                              )) && (
+                              <form onSubmit={handleDisputeSubmit}>
+                                <div className="p-4 col-span-2 md:col-span-1 bg-white dark:bg-dark rounded-lg outline outline-1 hover:outline-2 outline-gray-300 hover:outline-primary-500 dark:hover:outline-primary-500 dark:outline-gray-800 shadow-outline hover:shadow-hover text-center">
+                                  <div className="flex text-center justify-center border rounded p-3">
+                                    <div
+                                      className="flex items-center"
+                                      htmlFor="validateResult2"
+                                    >
+                                      <input
+                                        type="radio"
+                                        id="validateResult2"
+                                        name="validateResult"
+                                        value={true}
+                                        checked={raiseDispute === true}
+                                        onChange={() => setRaiseDispute(true)}
+                                        className="radio"
+                                      />
+                                      <label>Raise a dispute</label>
+                                    </div>
+                                  </div>
+                                  <br />
+                                  {raiseDispute ? (
+                                    <>
+                                      <div className="mb-3">
+                                        <label className="block">
+                                          Dispute Type
+                                        </label>
+                                        <select
+                                          name="disputeType"
+                                          onChange={(e) =>
+                                            setDisputeType(e.target.value)
+                                          }
+                                          required
+                                          className="select select-bordered w-full max-w-xs"
+                                        >
+                                          <option value="">Select</option>
+                                          <option value="ticket" selected>
+                                            Ticket
+                                          </option>
+                                          <option value="donation">
+                                            Donation
+                                          </option>
+                                          <option value="event">Event</option>
+                                          <option value="event_result">
+                                            Event Result
+                                          </option>
+                                          <option value="other">Other</option>
+                                        </select>
+                                      </div>
+                                      <hr />
+                                      <br />
+                                      <div className="mb-3">
+                                        <label className="block">Upload</label>
+                                        <input
+                                          type="file"
+                                          name="disputeScreenshot"
+                                          onChange={(event) =>
+                                            setDisputeScreenshotValue(
+                                              event.target.files[0]
+                                            )
+                                          }
+                                          className="file-input file-input-bordered w-full max-w-xs"
+                                        />
+                                      </div>
+                                      <hr />
+                                      <br />
+                                      <div className="mb-3">
+                                        <textarea
+                                          rows={2}
+                                          cols={40}
+                                          name="disputeMessage"
+                                          onChange={(event) =>
+                                            setDisputeMessage(
+                                              event.target.value
+                                            )
+                                          }
+                                          placeholder="Message"
+                                          value={disputeMessage}
+                                          className="textarea textarea-bordered"
+                                          required
+                                        ></textarea>
+                                      </div>
+                                      <div className="flex mt-3">
+                                        <button
+                                          class="box-border mx-auto relative z-30 ml-auto inline-flex items-center justify-center w-auto px-8 py-3 overflow-hidden font-bold text-white transition-all duration-300 bg-indigo-600 rounded-md cursor-pointer group ring-offset-2 ring-1 ring-indigo-300 ring-offset-indigo-200 hover:ring-offset-indigo-500 ease focus:outline-none"
+                                          disabled={disputeSubmitBtnDisabled}
+                                        >
+                                          <span class="absolute bottom-0 right-0 w-8 h-20 -mb-8 -mr-5 transition-all duration-300 ease-out transform rotate-45 translate-x-1 bg-white opacity-10 group-hover:translate-x-0"></span>
+                                          <span class="absolute top-0 left-0 w-20 h-8 -mt-1 -ml-12 transition-all duration-300 ease-out transform -rotate-45 -translate-x-1 bg-white opacity-10 group-hover:translate-x-0"></span>
+                                          <span class="relative z-20 flex items-center text-sm">
+                                            Submit
+                                          </span>
+                                        </button>
+                                      </div>
+                                    </>
+                                  ) : (
+                                    <></>
+                                  )}
+                                  {/* {console.log("aaaaaaaa", raiseDispute)} */}
+                                </div>
                               </form>
                             )}
-                          </form>
+                          </>
                         )
                       ) : auction && auction?.status === "EXPIRED" ? (
                         <AuctionResult bids={auction.eligibleBids} />
