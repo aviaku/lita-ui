@@ -14,16 +14,16 @@ const MyBids = () => {
 
   const auctionList = async (queryString = null) => {
     try {
-        const res = await axios.get(
-          `${apiEndpoint}/events/my-events/${user?.id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-            },
-          }
-        );
-        console.log("🚀 ~ file: index.js:17 ~ auctions ~ res:", res);
-        setAuctions(res.data.eventMemberships);
+      const res = await axios.get(
+        `${apiEndpoint}/events/my-events/${user?.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        }
+      );
+      console.log("🚀 ~ file: index.js:17 ~ auctions ~ res:", res);
+      setAuctions(res.data.eventMemberships);
     } catch (error) {
       console.log("🚀 ~ file: index.js:26 ~ gameList ~ error:", error);
     }
@@ -31,7 +31,7 @@ const MyBids = () => {
 
   useEffect(() => {
     if (!auctions.length) auctionList();
-  });
+  }, []);
 
   return (
     <div>

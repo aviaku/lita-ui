@@ -29,6 +29,7 @@ import FAQPage from "./pages/faq";
 import PrivacyPolicyPage from "./pages/privacyPolicy";
 import Payment from "./pages/payment/Payment";
 import Completion from "./pages/payment/Completion";
+import Success from "./pages/payment/Success";
 
 function App() {
   const [visible, setVisible] = useState(false);
@@ -142,6 +143,7 @@ function App() {
         <Route path="/completion" element={<Completion />} exact />
         <Route path="/privacyPolicy" element={<PrivacyPolicyPage />} exact />
         <Route path="/reset" element={<Reset />} />
+        <Route path="/success" element={<Success />} />
         <Route
           path="/"
           element={

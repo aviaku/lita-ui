@@ -11,6 +11,7 @@ import Footer from "../../components/footer/Index";
 import { auth, firestore } from "../../config/firebase";
 import CountdownTimer from "./CountdownTimer";
 import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import firebase from "firebase/app";
 import "firebase/firestore";
@@ -57,6 +58,7 @@ const Auction = () => {
   const [bidAmount, setBidAmount] = useState("");
   const [isMatchEnded, setIsMatchEnded] = useState(false);
   const [auction, setAuction] = useState(null);
+  const [inGameUsername, setInGameUsername] = useState("");
   const [donateTo, setDonateTo] = useState("host");
   const [highestBid, setHighestBid] = useState([]);
   const [submitDisabled, setSubmitDisabled] = useState(true);
@@ -71,6 +73,11 @@ const Auction = () => {
   const [resultSubmitBtnDisabled, setResultSubmitBtnDisabled] = useState(false);
   const [disputeSubmitBtnDisabled, setDisputeSubmitBtnDisabled] =
     useState(false);
+  const [gameCredentials, setGameCredentials] = useState("");
+  const [
+    gameCredentialsSubmitBtnDisabled,
+    setGameCredentialsSubmitBtnDisabled,
+  ] = useState(false);
   const messagesRef = firestore.collection(id);
   const query = messagesRef.orderBy("createdAt").limit(25);
 
@@ -87,13 +94,19 @@ const Auction = () => {
     // if (bidAmount.trim() === "") {
     //   return; // Skip if the formValue is empty or contains only whitespace
     // }
-
+    let endpoint = "";
+    if (auction.isAuctionTicket) {
+      endpoint = "placeBid";
+    } else {
+      endpoint = "purchase-ticket";
+    }
     try {
       const res = await axios.post(
-        `${apiEndpoint}/events/purchase-ticket`,
+        `${apiEndpoint}/events/${endpoint}`,
         {
           userId: user?.id,
           amount: auction.ticketPrice,
+          gameId: inGameUsername,
           image:
             auction?.user?.picture &&
             "https://cdn-icons-png.flaticon.com/512/666/666201.png",
@@ -106,26 +119,28 @@ const Auction = () => {
         }
       );
       if (res.status === 200) {
-        const lastMessage = messages && messages[messages.length - 1];
-        const userAlreadyBidded = messages.find(
-          (message) => message.uid === user.id
-        );
-        console.log("mmmmmmmmmmm", lastMessage, userAlreadyBidded);
-        if (userAlreadyBidded) {
-          await messagesRef.doc(userAlreadyBidded.id).update({
-            text: bidAmount,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-          });
-        } else {
-          await messagesRef.add({
-            text: bidAmount,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-            uid: user?.id,
-            photoURL:
-              user?.picture ||
-              "https://cdn-icons-png.flaticon.com/512/666/666201.png",
-            displayName: user?.first_name,
-          });
+        if (auction.isAuctionTicket) {
+          const lastMessage = messages && messages[messages.length - 1];
+          const userAlreadyBidded = messages.find(
+            (message) => message.uid === user.id
+          );
+          console.log("mmmmmmmmmmm", lastMessage, userAlreadyBidded);
+          if (userAlreadyBidded) {
+            await messagesRef.doc(userAlreadyBidded.id).update({
+              text: bidAmount,
+              createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            });
+          } else {
+            await messagesRef.add({
+              text: bidAmount,
+              createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+              uid: user?.id,
+              photoURL:
+                user?.picture ||
+                "https://cdn-icons-png.flaticon.com/512/666/666201.png",
+              displayName: user?.first_name,
+            });
+          }
         }
         setBidAmount("");
         setSubmitDisabled(true);
@@ -287,9 +302,11 @@ const Auction = () => {
       );
       if (res.status === 200) {
         setResultSubmitBtnDisabled(false);
+        toastify("Result Submitted Successfully!");
       }
     } catch (error) {
       console.log(error);
+      setResultSubmitBtnDisabled(false);
     }
   };
 
@@ -324,7 +341,33 @@ const Auction = () => {
       );
       if (res.status === 200) {
         setDisputeSubmitBtnDisabled(false);
+        setRaiseDispute(false);
         console.log(res);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleGameCredentialsSubmit = async (e) => {
+    e.preventDefault();
+    setGameCredentialsSubmitBtnDisabled(true);
+    const data = {
+      gameInfo: gameCredentials,
+    };
+    try {
+      const res = await axios.put(
+        `${apiEndpoint}/events/gameInfo/${id}`,
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        }
+      );
+      if (res.status === 200) {
+        setGameCredentialsSubmitBtnDisabled(false);
+        toastify("Credentials Submitted Successfully!");
       }
     } catch (error) {
       console.log(error);
@@ -469,6 +512,20 @@ const Auction = () => {
                   <CountdownTimer targetDate={auctionDateTime} />
                 )}
               </div>
+              {auction?.gameInfo &&
+                auction?.eventMembers.some(
+                  (member) => member?.user?._id === user?.id
+                ) && (
+                  <>
+                    <br />
+                    <p className="text-gray-900 dark:text-white mb-1">
+                      Gameplay Info:
+                    </p>
+                    <div className="mx-auto md:!ml-0 max-w-[284px] w-full h-14 px-4 py-2 flex items-center justify-between bg-white dark:bg-dark border border-gray-300 dark:border-gray-700 rounded-xl">
+                      <h3> {auction?.gameInfo} </h3>
+                    </div>
+                  </>
+                )}
               <div className="max-w-[484px] w-full">
                 <h4 className="mt-4 mb-0 text-4xl font-semibold leading-loose text-gray-900 dark:text-white">
                   {" "}
@@ -606,6 +663,22 @@ const Auction = () => {
                               className="input input-bordered w-full max-w-xs"
                             />
                           </div>
+                          <div className="block mt-4 w-1/2">
+                            {!alreadyBided ? (
+                              <input
+                                type="text"
+                                required
+                                placeholder="In game username"
+                                value={`${
+                                  inGameUsername ? inGameUsername : ""
+                                }`}
+                                onChange={(e) =>
+                                  setInGameUsername(e.target.value)
+                                }
+                                className="input input-bordered w-full max-w-xs"
+                              />
+                            ) : null}
+                          </div>
                           {user ? (
                             <button
                               className="btn btn-primary mt-4 px-8"
@@ -618,7 +691,7 @@ const Auction = () => {
                               to="/login"
                               className="btn btn-primary mt-4 px-8"
                             >
-                              Login to Buy Ticket
+                              Login to Bid
                             </Link>
                           )}
                         </form>
@@ -640,12 +713,30 @@ const Auction = () => {
                           /> */}
                           </div>
                           {user ? (
-                            <button
-                              className="btn btn-primary mt-4 px-8"
-                              disabled={submitDisabled || alreadyBided}
-                            >
-                              Buy a Ticket
-                            </button>
+                            <>
+                              {!alreadyBided ? (
+                                <div className="block mt-4 w-1/2">
+                                  <input
+                                    type="text"
+                                    required
+                                    placeholder="In game username"
+                                    value={`${
+                                      inGameUsername ? inGameUsername : ""
+                                    }`}
+                                    onChange={(e) =>
+                                      setInGameUsername(e.target.value)
+                                    }
+                                    className="input input-bordered w-full max-w-xs"
+                                  />
+                                </div>
+                              ) : null}
+                              <button
+                                className="btn btn-primary mt-4 px-8"
+                                disabled={submitDisabled || alreadyBided}
+                              >
+                                Buy a Ticket
+                              </button>
+                            </>
                           ) : (
                             <Link
                               to="/login"
@@ -734,17 +825,269 @@ const Auction = () => {
                                         "DDMMYYYY h:mm:ss a"
                                       ).fromNow()}
                                   </span>
+                                  <div className="text-slate-400 text-[16px]">
+                                    Game ID: {bid?.gameId && bid?.gameId}
+                                  </div>
                                 </div>
                               </div>
                             </>
                           ))
-                        ) : auction && auction?.status === "COMPLETED" ? (
-                          <AuctionResult bids={auction.eligibleBids} />
+                        ) : auction && auction?.status === "IN_PROGRESS" ? (
+                          // <AuctionResult bids={auction.eligibleBids} />
+                          auction?.eventMembers && (
+                            <>
+                              {auction && auction?.reUploadResult && (
+                                <div className="text-red-500">
+                                  You have to reupload the result
+                                </div>
+                              )}
+                              <form onSubmit={handleResultSubmit}>
+                                {auction?.eventMembers.map((bid, i) => (
+                                  <div className="flex items-center justify-between mt-4">
+                                    <div className="flex items-center">
+                                      <div className="relative inline-block">
+                                        <img
+                                          src={
+                                            bid?.user?.picture ||
+                                            `https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D&w=1000&q=80`
+                                          }
+                                          className="h-16 rounded-md"
+                                          alt=""
+                                        />
+                                        <i className="mdi mdi-check-decagram text-emerald-600 text-lg absolute -top-2 -end-2" />
+                                      </div>
+                                      <div className="ms-3">
+                                        <h6 className="font-semibold">
+                                          ₹{bid?.amount}{" "}
+                                          <span className="text-slate-400">
+                                            by
+                                          </span>{" "}
+                                          <a
+                                            href="#"
+                                            className="hover:text-violet-600 duration-500 ease-in-out"
+                                          >
+                                            {`${bid?.user?.first_name} ${bid?.user?.last_name}`}
+                                          </a>
+                                        </h6>
+                                        <span className="text-slate-400 text-[16px]">
+                                          {moment(bid?.createdAt).fromNow()}
+                                        </span>
+                                        <div className="text-slate-400 text-[16px]">
+                                          Game Id: {bid?.gameId && bid?.gameId}
+                                        </div>
+                                      </div>
+                                    </div>
+                                    {(isMatchEnded ||
+                                      auction?.rankingsScreenshotUrl) && (
+                                      <>
+                                        {!auction?.rankingsScreenshotUrl ||
+                                        auction?.reUploadResult ? (
+                                          <input
+                                            className="input input-bordered w-full max-w-xs"
+                                            type="number"
+                                            name={`player_${[i]}_${[
+                                              bid.user._id,
+                                            ]}`}
+                                            onWheel={(e) => e.target.blur()}
+                                            onBlur={(e) => handleRankChange(e)}
+                                          />
+                                        ) : (
+                                          <h6 className="font-semibold">
+                                            Rank {bid?.ranking}
+                                          </h6>
+                                        )}
+                                      </>
+                                    )}
+                                  </div>
+                                ))}
+                                <br />
+                                <br />
+                                {auction.status === "IN_PROGRESS" && (
+                                  // add a textarea for the game credentials
+                                  <div className="flex justify-center items-center mb-3 ">
+                                    <textarea
+                                      rows={1}
+                                      cols={40}
+                                      name="gameCredentials"
+                                      onChange={(event) =>
+                                        setGameCredentials(event.target.value)
+                                      }
+                                      placeholder="Gameplay Info"
+                                      value={gameCredentials}
+                                      className="textarea textarea-bordered"
+                                      required
+                                    ></textarea>
+                                    <button
+                                      class="btn btn-primary mt-4 px-8"
+                                      onClick={handleGameCredentialsSubmit}
+                                      disabled={
+                                        gameCredentialsSubmitBtnDisabled
+                                      }
+                                    >
+                                      Submit
+                                    </button>
+                                  </div>
+                                )}
+                                {(isMatchEnded ||
+                                  auction.rankingsScreenshotUrl) && (
+                                  <div>
+                                    {!auction.rankingsScreenshotUrl ? (
+                                      <>
+                                        <div className="flex justify-between items-center">
+                                          <label>Result Screenshot</label>
+                                          <input
+                                            type="file"
+                                            name="screenshot"
+                                            onChange={(event) =>
+                                              setScreenshotValue(
+                                                event.target.files[0]
+                                              )
+                                            }
+                                            placeholder="Game Image"
+                                            className="file-input file-input-bordered w-full max-w-xs"
+                                          />
+                                        </div>
+                                        <button
+                                          class="btn btn-primary mt-4 px-8"
+                                          disabled={resultSubmitBtnDisabled}
+                                        >
+                                          Submit
+                                        </button>
+                                      </>
+                                    ) : (
+                                      <>
+                                        <h1 className="text-2xl font-semibold">
+                                          Result
+                                        </h1>
+                                        <div className="p-4 col-span-2 md:col-span-1 bg-white dark:bg-dark rounded-lg outline outline-1 hover:outline-2 outline-gray-300 hover:outline-primary-500 dark:hover:outline-primary-500 dark:outline-gray-800 shadow-outline hover:shadow-hover">
+                                          <img
+                                            className="w-full rounded-lg"
+                                            src={auction.rankingsScreenshotUrl}
+                                            alt="Result Screenshot"
+                                          />
+                                        </div>
+                                      </>
+                                    )}
+                                  </div>
+                                )}
+                                <br />
+                                <br />
+                              </form>
+                              {(auction?.eventMembers.some(
+                                (member) => member?.user?._id === user?.id
+                              ) ||
+                                auction?.donations.some(
+                                  (member) => member?.user?._id === user?.id
+                                )) && (
+                                <form onSubmit={handleDisputeSubmit}>
+                                  <div className="p-4 col-span-2 md:col-span-1 bg-white dark:bg-dark rounded-lg outline outline-1 hover:outline-2 outline-gray-300 hover:outline-primary-500 dark:hover:outline-primary-500 dark:outline-gray-800 shadow-outline hover:shadow-hover text-center">
+                                    <div className="flex text-center justify-center border rounded p-3">
+                                      <div
+                                        className="flex items-center"
+                                        htmlFor="validateResult2"
+                                      >
+                                        <input
+                                          type="radio"
+                                          id="validateResult2"
+                                          name="validateResult"
+                                          value={true}
+                                          checked={raiseDispute === true}
+                                          onChange={() => setRaiseDispute(true)}
+                                          className="radio"
+                                        />
+                                        <label>Raise a dispute</label>
+                                      </div>
+                                    </div>
+                                    <br />
+                                    {raiseDispute ? (
+                                      <>
+                                        <div className="mb-3">
+                                          <label className="block">
+                                            Dispute Type
+                                          </label>
+                                          <select
+                                            name="disputeType"
+                                            onChange={(e) =>
+                                              setDisputeType(e.target.value)
+                                            }
+                                            required
+                                            className="select select-bordered w-full max-w-xs"
+                                          >
+                                            <option value="">Select</option>
+                                            <option value="ticket" selected>
+                                              Ticket
+                                            </option>
+                                            <option value="donation">
+                                              Donation
+                                            </option>
+                                            <option value="event">Event</option>
+                                            <option value="event_result">
+                                              Event Result
+                                            </option>
+                                            <option value="other">Other</option>
+                                          </select>
+                                        </div>
+                                        <hr />
+                                        <br />
+                                        <div className="mb-3">
+                                          <label className="block">
+                                            Upload
+                                          </label>
+                                          <input
+                                            type="file"
+                                            name="disputeScreenshot"
+                                            onChange={(event) =>
+                                              setDisputeScreenshotValue(
+                                                event.target.files[0]
+                                              )
+                                            }
+                                            className="file-input file-input-bordered w-full max-w-xs"
+                                          />
+                                        </div>
+                                        <hr />
+                                        <br />
+                                        <div className="mb-3">
+                                          <textarea
+                                            rows={2}
+                                            cols={40}
+                                            name="disputeMessage"
+                                            onChange={(event) =>
+                                              setDisputeMessage(
+                                                event.target.value
+                                              )
+                                            }
+                                            placeholder="Message"
+                                            value={disputeMessage}
+                                            className="textarea textarea-bordered"
+                                            required
+                                          ></textarea>
+                                        </div>
+                                        <div className="flex mt-3">
+                                          <button
+                                            class="box-border mx-auto relative z-30 ml-auto inline-flex items-center justify-center w-auto px-8 py-3 overflow-hidden font-bold text-white transition-all duration-300 bg-indigo-600 rounded-md cursor-pointer group ring-offset-2 ring-1 ring-indigo-300 ring-offset-indigo-200 hover:ring-offset-indigo-500 ease focus:outline-none"
+                                            disabled={disputeSubmitBtnDisabled}
+                                          >
+                                            <span class="absolute bottom-0 right-0 w-8 h-20 -mb-8 -mr-5 transition-all duration-300 ease-out transform rotate-45 translate-x-1 bg-white opacity-10 group-hover:translate-x-0"></span>
+                                            <span class="absolute top-0 left-0 w-20 h-8 -mt-1 -ml-12 transition-all duration-300 ease-out transform -rotate-45 -translate-x-1 bg-white opacity-10 group-hover:translate-x-0"></span>
+                                            <span class="relative z-20 flex items-center text-sm">
+                                              Submit
+                                            </span>
+                                          </button>
+                                        </div>
+                                      </>
+                                    ) : (
+                                      <></>
+                                    )}
+                                    {/* {console.log("aaaaaaaa", raiseDispute)} */}
+                                  </div>
+                                </form>
+                              )}
+                            </>
+                          )
                         ) : null
                       ) : auction ? (
                         auction?.eventMembers && (
                           <>
-                            {console.log("Hiiiii", auction?.reUploadResult)}
                             {auction && auction?.reUploadResult && (
                               <div className="text-red-500">
                                 You have to reupload the result
@@ -757,7 +1100,7 @@ const Auction = () => {
                                     <div className="relative inline-block">
                                       <img
                                         src={
-                                          bid?.user.picture ||
+                                          bid?.user?.picture ||
                                           `https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D&w=1000&q=80`
                                         }
                                         className="h-16 rounded-md"
@@ -781,6 +1124,9 @@ const Auction = () => {
                                       <span className="text-slate-400 text-[16px]">
                                         {moment(bid?.createdAt).fromNow()}
                                       </span>
+                                      <div className="text-slate-400 text-[16px]">
+                                        Game Id: {bid?.gameId && bid?.gameId}
+                                      </div>
                                     </div>
                                   </div>
                                   {(isMatchEnded ||
@@ -808,6 +1154,30 @@ const Auction = () => {
                               ))}
                               <br />
                               <br />
+                              {auction.status === "IN_PROGRESS" && (
+                                // add a textarea for the game credentials
+                                <div className="flex justify-center items-center mb-3 ">
+                                  <textarea
+                                    rows={1}
+                                    cols={40}
+                                    name="gameCredentials"
+                                    onChange={(event) =>
+                                      setGameCredentials(event.target.value)
+                                    }
+                                    placeholder="Gameplay Info"
+                                    value={gameCredentials}
+                                    className="textarea textarea-bordered"
+                                    required
+                                  ></textarea>
+                                  <button
+                                    class="btn btn-primary mt-4 px-8"
+                                    onClick={handleGameCredentialsSubmit}
+                                    disabled={gameCredentialsSubmitBtnDisabled}
+                                  >
+                                    Submit
+                                  </button>
+                                </div>
+                              )}
                               {(isMatchEnded ||
                                 auction.rankingsScreenshotUrl) && (
                                 <div>
@@ -854,10 +1224,10 @@ const Auction = () => {
                               <br />
                             </form>
                             {(auction?.eventMembers.some(
-                              (member) => member?.user?._id === user.id
+                              (member) => member?.user?._id === user?.id
                             ) ||
                               auction?.donations.some(
-                                (member) => member?.user?._id === user.id
+                                (member) => member?.user?._id === user?.id
                               )) && (
                               <form onSubmit={handleDisputeSubmit}>
                                 <div className="p-4 col-span-2 md:col-span-1 bg-white dark:bg-dark rounded-lg outline outline-1 hover:outline-2 outline-gray-300 hover:outline-primary-500 dark:hover:outline-primary-500 dark:outline-gray-800 shadow-outline hover:shadow-hover text-center">

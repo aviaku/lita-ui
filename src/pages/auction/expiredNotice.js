@@ -6,5 +6,4 @@ const ExpiredNotice = () => {
   );
 };
 
-
 export default ExpiredNotice;

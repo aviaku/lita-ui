@@ -1,8 +1,10 @@
-import { PaymentElement } from "@stripe/react-stripe-js";
+import { PaymentElement, CardElement } from "@stripe/react-stripe-js";
 import { useState } from "react";
+import { useSelector } from "react-redux";
 import { useStripe, useElements } from "@stripe/react-stripe-js";
 
-export default function CheckoutForm() {
+export default function CheckoutForm({ depositAmount }) {
+  const { user } = useSelector((state) => ({ ...state }));
   const stripe = useStripe();
   const elements = useElements();
 
@@ -24,7 +26,7 @@ export default function CheckoutForm() {
       elements,
       confirmParams: {
         // Make sure to change this to your payment completion page
-        return_url: `${window.location.origin}/completion`,
+        return_url: `${window.location.origin}/completion?userId=${user.id}&amount=${depositAmount}`,
       },
     });
 
@@ -39,6 +41,7 @@ export default function CheckoutForm() {
 
   return (
     <form id="payment-form" onSubmit={handleSubmit}>
+      {/* <CardElement /> */}
       <PaymentElement id="payment-element" />
       <button disabled={isProcessing || !stripe || !elements} id="submit">
         <span id="button-text">
