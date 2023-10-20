@@ -101,24 +101,45 @@ const Auction = () => {
       endpoint = "purchase-ticket";
     }
     try {
-      const res = await axios.post(
-        `${apiEndpoint}/events/${endpoint}`,
-        {
-          userId: user?.id,
-          amount: auction.ticketPrice,
-          gameId: inGameUsername,
-          image:
-            auction?.user?.picture &&
-            "https://cdn-icons-png.flaticon.com/512/666/666201.png",
-          eventId: id,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${user.token}`,
+      let res;
+      if (auction.isAuctionTicket) {
+        res = await axios.put(
+          `${apiEndpoint}/event/placeBid`,
+          {
+            userId: user?.id,
+            amount: auction.ticketPrice,
+            gameId: inGameUsername,
+            image:
+              auction?.user?.picture &&
+              "https://cdn-icons-png.flaticon.com/512/666/666201.png",
+            eventId: id,
           },
-        }
-      );
-      if (res.status === 200) {
+          {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+            },
+          }
+        );
+      } else {
+        res = await axios.post(
+          `${apiEndpoint}/events/purchase-ticket`,
+          {
+            userId: user?.id,
+            amount: auction.ticketPrice,
+            gameId: inGameUsername,
+            image:
+              auction?.user?.picture &&
+              "https://cdn-icons-png.flaticon.com/512/666/666201.png",
+            eventId: id,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+            },
+          }
+        );
+      }
+      if (res?.status === 200) {
         if (auction.isAuctionTicket) {
           const lastMessage = messages && messages[messages.length - 1];
           const userAlreadyBidded = messages.find(
@@ -1377,6 +1398,34 @@ const Auction = () => {
                     </div>
                   </div>
                 </div>
+
+                <br />
+                <br />
+                {auction?.rankingPercentages?.length > 0 && (
+                  <>
+                    <h2 className="text-2xl font-semibold">
+                      Prize Distribution
+                    </h2>
+                    <div className="p-4 col-span-2 md:col-span-1 bg-white dark:bg-dark rounded-lg outline outline-1 hover:outline-2 outline-gray-300 hover:outline-primary-500 dark:hover:outline-primary-500 dark:outline-gray-800 shadow-outline hover:shadow-hover text-center">
+                      <div className="flex text-center justify-center border rounded p-3">
+                        <div className="overflow-x-auto w-full">
+                          <table className="table w-full">
+                            <tbody>
+                              {/* row 1 */}
+                              {auction?.rankingPercentages?.map((ranking) => (
+                                <tr className="flex justify-between">
+                                  <th>Rank {ranking.ranking}</th>
+                                  <td>{ranking.percentage}%</td>
+                                </tr>
+                              ))}
+                              {/* row 2 */}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>

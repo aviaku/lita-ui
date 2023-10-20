@@ -102,7 +102,7 @@ export default function EditDetails({
             updateDetails={updateDetails}
             infos={infos}
           />
-          <div className="details_header">Relationship</div>
+          {/* <div className="details_header">Relationship</div>
           <Detail
             value={details?.relationship}
             img="relationship"
@@ -113,7 +113,7 @@ export default function EditDetails({
             updateDetails={updateDetails}
             infos={infos}
             rel
-          />
+          /> */}
           <div className="details_header">Instagram</div>
           <Detail
             value={details?.instagram}

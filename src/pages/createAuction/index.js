@@ -32,6 +32,8 @@ const CreateAuction = () => {
   const [percentageDivision, setPercentageDivision] = useState([]);
   const [errorMsg, setErrorMsg] = useState([]);
 
+  let prizeDistributionInfo = "";
+
   const apiEndpoint = process.env.REACT_APP_BACKEND_URL;
 
   const {
@@ -100,6 +102,14 @@ const CreateAuction = () => {
       action.resetForm();
     },
   });
+
+  if (values.percentageDivisionMode === "not_divided") {
+    prizeDistributionInfo = "Prize will go to the host only";
+  } else if (values.percentageDivisionMode === "same") {
+    prizeDistributionInfo = "Prize will be go to all players equally";
+  } else if (values.percentageDivisionMode === "ranking") {
+    prizeDistributionInfo = "Host can define prize distribution for each rank";
+  }
 
   const handleDateChange = (date) => {
     setDateTime(date);
@@ -366,6 +376,11 @@ const CreateAuction = () => {
                       <option value="ranking">Ranking Wise</option>
                       {/* <option value="different">Custom</option> */}
                     </select>
+                    <label className="label">
+                      <span className="label-text-alt">
+                        {prizeDistributionInfo}
+                      </span>
+                    </label>
                     {errors.percentageDivisionMode &&
                     touched.percentageDivisionMode ? (
                       <label className="label">
