@@ -6,7 +6,7 @@ import Nav from "../../components/headerNoAuth/index";
 import Footer from "../../components/footer/Index";
 import DateTimePicker from "./dateTimePicker";
 import { toastify } from "../../helpers/toastify";
-import {createAuctionSchema} from './createAuctionSchema'
+import { createAuctionSchema } from "./createAuctionSchema";
 import { ToastContainer } from "react-toastify";
 import Header from "../../components/header";
 import Multiselect from "multiselect-react-dropdown";
@@ -18,13 +18,13 @@ const initialValues = {
   dateTime: "",
   description: "",
   eventMembers: [],
-  percentageDivisionMode: "",
-  isAuctionTicket: "false"
+  percentageDivisionMode: "not_divided",
+  isAuctionTicket: "false",
 };
 
 const CreateAuction = () => {
   const { user } = useSelector((state) => ({ ...state }));
-  const [dateTime, setDateTime] = useState("")
+  const [dateTime, setDateTime] = useState("");
   const [games, setGames] = useState([]);
   const [users, setUsers] = useState([]);
   const [selectedUsers, setSelectedUsers] = useState([]);
@@ -33,7 +33,7 @@ const CreateAuction = () => {
   const [errorMsg, setErrorMsg] = useState([]);
 
   const apiEndpoint = process.env.REACT_APP_BACKEND_URL;
-  
+
   const {
     values,
     errors,
@@ -46,13 +46,12 @@ const CreateAuction = () => {
     initialValues: initialValues,
     validationSchema: createAuctionSchema,
     onSubmit: async (values, action) => {
-
       var sum = percentageDivision.reduce((accumulator, currentValue) => {
         return parseInt(accumulator) + parseInt(currentValue);
       }, 0);
 
       console.log(sum);
-      if (sum !== 100) { 
+      if ((values.percentageDivisionMode === "ranking") & (sum !== 100)) {
         return setErrorMsg("Sum of share percentage must be 100!");
       } else {
         setErrorMsg("");
@@ -60,16 +59,18 @@ const CreateAuction = () => {
 
       const getGames = await axios.get(`${apiEndpoint}/getAllGames`);
 
-      const selectedGame = getGames.data.filter(games => games._id === values.gameId)
+      const selectedGame = getGames.data.filter(
+        (games) => games._id === values.gameId
+      );
       console.log(
         "🚀 ~ file: index.js:45 ~ onSubmit: ~ selectedGame:",
-        getGames.data, values.gameId
+        getGames.data,
+        values.gameId
       );
       console.log(
         "🚀 ~ file: index.js:47 ~ onSubmit: ~ selectedGame:",
         selectedGame
       );
-      
 
       const data = {
         ...values,
@@ -81,21 +82,21 @@ const CreateAuction = () => {
         isAuctionTicket: values.isAuctionTicket === "false" ? false : true,
         rankingPercentages: percentageDivision.map((p, i) => {
           // let j = i + 1;
-          return {ranking: i + 1, percentage: parseInt(p)}
-        })
+          return { ranking: i + 1, percentage: parseInt(p) };
+        }),
       };
-      console.log("🚀 ~ file: index.js:36 ~ onSubmit: ~ values:", data)
-      
-        try {
-          const res = await axios.post(`${apiEndpoint}/events`, data, {
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-            },
-          });
-          toastify("Tournament Created!");
-        } catch (error) {
-          toastify(error);
-        }
+      console.log("🚀 ~ file: index.js:36 ~ onSubmit: ~ values:", data);
+
+      try {
+        const res = await axios.post(`${apiEndpoint}/events`, data, {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        });
+        toastify("Tournament Created!");
+      } catch (error) {
+        toastify(error);
+      }
       action.resetForm();
     },
   });
@@ -145,11 +146,11 @@ const CreateAuction = () => {
 
   const handlePercentageDivision = (e) => {
     console.log(e.target.name, e.target.value);
-    const rankPosition = e.target.name.split('_')[1];
+    const rankPosition = e.target.name.split("_")[1];
     if (rankPosition !== -1) {
       const percentageDivisionArr = percentageDivision;
-      percentageDivisionArr[rankPosition] = e.target.value
-      setPercentageDivision([...percentageDivisionArr])
+      percentageDivisionArr[rankPosition] = e.target.value;
+      setPercentageDivision([...percentageDivisionArr]);
     }
     // const oldPercentageDivision = [...percentageDivision]
     // if(percentageDivision[rankPosition]) {
@@ -161,7 +162,7 @@ const CreateAuction = () => {
     //   e.target.value,
     // ]);
     console.log(percentageDivision, rankPosition);
-  }
+  };
 
   useEffect(() => {
     gameList();
@@ -297,8 +298,7 @@ const CreateAuction = () => {
                       </option>
                       <option value={true}>Auction</option>
                     </select>
-                    {errors.isAuctionTicket &&
-                    touched.isAuctionTicket ? (
+                    {errors.isAuctionTicket && touched.isAuctionTicket ? (
                       <label className="label">
                         <span className="label-text-alt text-red-500">
                           {errors.isAuctionTicket}

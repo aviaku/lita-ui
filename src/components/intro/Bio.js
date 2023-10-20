@@ -37,7 +37,7 @@ export default function Bio({
       {!detail && <div className="remaining">{max} characters remaining</div>}
       <div className="flex">
         <div className="flex flex_left">
-          <i className="public_icon"></i>Public
+          {/* <i className="public_icon"></i>Public */}
         </div>
         <div className="flex flex_right">
           <button

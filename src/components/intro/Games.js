@@ -14,28 +14,27 @@ export default function Games({
   detail,
   setShow,
   rel,
-  games
+  games,
 }) {
+  const apiEndpoint = process.env.REACT_APP_BACKEND_URL;
 
-    const apiEndpoint = process.env.REACT_APP_BACKEND_URL;
+  const { user } = useSelector((state) => ({ ...state }));
 
-    const { user } = useSelector((state) => ({ ...state }));
-    
-    const [selectedGames, setSelectedGames] = useState([]);
-    const [allGames, setAllGames] = useState([]);
-    
-    const gameList = async () => {
-      try {
-        const res = await axios.get(`${apiEndpoint}/getAllGames`);
-        setAllGames(res.data);
-      } catch (error) {
-        console.log("🚀 ~ file: index.js:26 ~ gameList ~ error:", error);
-      }
-    };
+  const [selectedGames, setSelectedGames] = useState([]);
+  const [allGames, setAllGames] = useState([]);
+
+  const gameList = async () => {
+    try {
+      const res = await axios.get(`${apiEndpoint}/getAllGames`);
+      setAllGames(res.data);
+    } catch (error) {
+      console.log("🚀 ~ file: index.js:26 ~ gameList ~ error:", error);
+    }
+  };
 
   const onSelect = (selectedList, selectedItem) => {
     console.log(selectedList, selectedItem);
-    setSelectedGames(selectedList)
+    setSelectedGames(selectedList);
   };
 
   const onRemove = (selectedList, removedItem) => {
@@ -44,7 +43,7 @@ export default function Games({
 
   const handleSave = async () => {
     try {
-      selectedGames.forEach(async element => {
+      selectedGames.forEach(async (element) => {
         const res = await axios.post(
           `${apiEndpoint}/gamers/save`,
           { gameId: element._id, userId: user.id },
@@ -54,31 +53,29 @@ export default function Games({
             },
           }
         );
-      console.log("🚀 ~ file: index.js:17 ~ auctions ~ res:", res);
+        console.log("🚀 ~ file: index.js:17 ~ auctions ~ res:", res);
       });
       // setAuctions(res.data);
-    } catch (error) {
-        
-    }
-  }
+    } catch (error) {}
+  };
 
   useEffect(() => {
     gameList();
   }, []);
   return (
     <div className="add_bio_wrap">
-        <Multiselect
-          options={allGames} // Options to display in the dropdown
-          // selectedValues={this.state.selectedValue} // Preselected value to persist in dropdown
-          onSelect={onSelect} // Function will trigger on select event
-          onRemove={onRemove} // Function will trigger on remove event
-          displayValue="name" // Property name to display in the dropdown options
-          showCheckbox={false}
-        />
+      <Multiselect
+        options={allGames} // Options to display in the dropdown
+        // selectedValues={this.state.selectedValue} // Preselected value to persist in dropdown
+        onSelect={onSelect} // Function will trigger on select event
+        onRemove={onRemove} // Function will trigger on remove event
+        displayValue="name" // Property name to display in the dropdown options
+        showCheckbox={false}
+      />
       {!detail && <div className="remaining">{max} characters remaining</div>}
       <div className="flex">
         <div className="flex flex_left">
-          <i className="public_icon"></i>Public
+          {/* <i className="public_icon"></i>Public */}
         </div>
         <div className="flex flex_right">
           <button
@@ -90,7 +87,7 @@ export default function Games({
           <button
             className="blue_btn"
             onClick={() => {
-            //   updateDetails();
+              //   updateDetails();
               handleSave();
               setShow(false);
             }}
