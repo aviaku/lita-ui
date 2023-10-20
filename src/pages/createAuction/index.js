@@ -129,7 +129,7 @@ const CreateAuction = () => {
       const res = await axios.get(`${apiEndpoint}/getAllUsers`);
       setUsers(res.data);
     } catch (error) {
-      console.log("🚀 ~ file: index.js:26 ~ gameList ~ error:", error);
+      console.log("🚀 ~ file: index.js:26 ~ gameList ~ error", error);
     }
   };
 
