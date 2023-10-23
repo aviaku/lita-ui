@@ -265,9 +265,9 @@ export default function Profile({ getAllPosts }) {
                       <div className="profile_card_header">
                         Friends
                         <Link to="/friends">
-                        <div className="profile_header_link">
-                          See all friends
-                        </div>
+                          <div className="profile_header_link">
+                            See all friends
+                          </div>
                         </Link>
                       </div>
                       <div className="sekelton_loader">
@@ -281,6 +281,7 @@ export default function Profile({ getAllPosts }) {
                       detailss={profile.details}
                       visitor={visitor}
                       setOthername={setOthername}
+                      gamesPlayed={profile.savedGames}
                     />
                     <Photos
                       username={userName}

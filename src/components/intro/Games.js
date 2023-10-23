@@ -15,10 +15,16 @@ export default function Games({
   setShow,
   rel,
   games,
+  gamesPlayed,
 }) {
   const apiEndpoint = process.env.REACT_APP_BACKEND_URL;
 
   const { user } = useSelector((state) => ({ ...state }));
+
+  console.log(
+    "gamesPlayed",
+    gamesPlayed.map((item) => item.game)
+  );
 
   const [selectedGames, setSelectedGames] = useState([]);
   const [allGames, setAllGames] = useState([]);
@@ -26,6 +32,7 @@ export default function Games({
   const gameList = async () => {
     try {
       const res = await axios.get(`${apiEndpoint}/getAllGames`);
+      console.log("All Games", res.data);
       setAllGames(res.data);
     } catch (error) {
       console.log("🚀 ~ file: index.js:26 ~ gameList ~ error:", error);
@@ -37,8 +44,19 @@ export default function Games({
     setSelectedGames(selectedList);
   };
 
-  const onRemove = (selectedList, removedItem) => {
+  const onRemove = async (selectedList, removedItem) => {
     setSelectedGames(selectedList);
+    console.log("removed item", removedItem);
+    const res = await axios.post(
+      `${apiEndpoint}/gamers/save`,
+      { gameId: removedItem._id, userId: user.id, remove: true },
+      {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      }
+    );
+    console.log("🚀 ~ file: index.js:17 ~ auctions ~ res:", res);
   };
 
   const handleSave = async () => {
@@ -66,7 +84,7 @@ export default function Games({
     <div className="add_bio_wrap">
       <Multiselect
         options={allGames} // Options to display in the dropdown
-        // selectedValues={this.state.selectedValue} // Preselected value to persist in dropdown
+        selectedValues={gamesPlayed.map((item) => item.game)} // Preselected value to persist in dropdown
         onSelect={onSelect} // Function will trigger on select event
         onRemove={onRemove} // Function will trigger on remove event
         displayValue="name" // Property name to display in the dropdown options

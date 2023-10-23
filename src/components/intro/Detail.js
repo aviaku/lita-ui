@@ -14,7 +14,8 @@ export default function Detail({
   infos,
   text,
   rel,
-  games
+  games,
+  gamesPlayed,
 }) {
   const apiEndpoint = process.env.REACT_APP_BACKEND_URL;
   const [show, setShow] = useState(false);
@@ -44,10 +45,14 @@ export default function Detail({
         {value ? (
           <div className="info_profile ">
             <img src={`../../../icons/${img}.png`} alt="" />
-            {games ? <p>
-              {myGames && myGames.map(game => (<span>{game.game.name},</span>))}
-            </p> :
-            value}
+            {games ? (
+              <p>
+                {myGames &&
+                  myGames.map((game) => <span>{game.game.name},</span>)}
+              </p>
+            ) : (
+              value
+            )}
             <i className="edit_icon"></i>
           </div>
         ) : (
@@ -57,30 +62,32 @@ export default function Detail({
           </>
         )}
       </div>
-      {show && (games ? (
-        <Games
-          placeholder={placeholder}
-          name={name}
-          handleChange={handleChange}
-          updateDetails={updateDetails}
-          infos={infos}
-          detail
-          setShow={setShow}
-          rel={rel}
-          games={games}
-        />
-      ) : (
-        <Bio
-          placeholder={placeholder}
-          name={name}
-          handleChange={handleChange}
-          updateDetails={updateDetails}
-          infos={infos}
-          detail
-          setShow={setShow}
-          rel={rel}
-        />
-      ))}
+      {show &&
+        (games ? (
+          <Games
+            placeholder={placeholder}
+            name={name}
+            handleChange={handleChange}
+            updateDetails={updateDetails}
+            infos={infos}
+            detail
+            setShow={setShow}
+            gamesPlayed={gamesPlayed}
+            rel={rel}
+            games={games}
+          />
+        ) : (
+          <Bio
+            placeholder={placeholder}
+            name={name}
+            handleChange={handleChange}
+            updateDetails={updateDetails}
+            infos={infos}
+            detail
+            setShow={setShow}
+            rel={rel}
+          />
+        ))}
     </div>
   );
 }

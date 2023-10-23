@@ -9,6 +9,7 @@ export default function EditDetails({
   updateDetails,
   infos,
   setVisible,
+  gamesPlayed,
 }) {
   const modal = useRef(null);
   useOnCLickOutside(modal, () => setVisible(false));
@@ -35,6 +36,7 @@ export default function EditDetails({
             text="games"
             handleChange={handleChange}
             updateDetails={updateDetails}
+            gamesPlayed={gamesPlayed}
             infos={infos}
             games={"games"}
           />
