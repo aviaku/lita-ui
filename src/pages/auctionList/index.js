@@ -10,62 +10,51 @@ const AuctionList = () => {
   const [auctions, setAuctions] = useState([]);
   const { user } = useSelector((state) => ({ ...state }));
   const [filters, setFilters] = useState({});
-  const [filertsApplied, setFiltersApplied] = useState(false)
+  const [filertsApplied, setFiltersApplied] = useState(false);
   const [selectedOption, setSelectedOption] = useState("");
 
   const apiEndpoint = process.env.REACT_APP_BACKEND_URL;
-  
-  const handleFilterChange = (e) => {
 
-    const newFilters = {...filters}
-    newFilters[e.target.name] = e.target.value
-    setFilters(newFilters)
+  // handle filter change
+  const handleFilterChange = async (e) => {
+    const newFilters = { ...filters };
+    newFilters[e.target.name] = e.target.value;
+    setFilters(newFilters);
     setSelectedOption(e.target.value);
 
-    const objString = "?" + new URLSearchParams(newFilters).toString();
-    console.log(objString);
-    auctionList(objString)
+    // Call the api
+    auctionList(newFilters);
+  };
 
-    // console.log(e, e.target.value, e.target.name);
-    // let string;
-    // if(e.target.name === "category") {
-    //   if(filters) {
-    //     string = `${filters}&&category=${e.target.value}`
-    //   } else {
-    //     string = `category=${e.target.value}`
-    //   }
-    // } else if(e.target.name === "gender") {
-    //   if (filters) {
-    //     string = `${filters}&&gender=${e.target.value}`;
-    //   } else {
-    //     string = `gender=${e.target.value}`;
-    //   }
-    // }
-    // setFilters(string)
-    // console.log(string);
-  }
+  // const handleFilterChange = (e) => {
+  //   const newFilters = { ...filters };
+  //   newFilters[e.target.name] = e.target.value;
+  //   setFilters(newFilters);
+  //   setSelectedOption(e.target.value);
 
-const handleReset = () => {
-  setSelectedOption("");
-  auctionList();
-};
+  //   const objString = "?" + new URLSearchParams(newFilters).toString();
+  //   console.log(objString);
+  //   auctionList(objString);
+  // };
+
+  const handleReset = () => {
+    setSelectedOption("");
+    auctionList();
+  };
 
   const auctionList = async (queryString = null) => {
     try {
-      if(queryString) {
-        const res = await axios.get(
-          `${apiEndpoint}/searchAuctions${queryString}`
-        );
-        console.log("🚀 ~ file: index.js:17 ~ auctions ~ res:", res);
-        setAuctions(res.data.docs);
-      } else {
-      const res = await axios.post(
-        `${apiEndpoint}/getAllEvents`,
-        {status: "ACTIVE"}
-      );
+      // if (queryString) {
+      //   const res = await axios.get(
+      //     `${apiEndpoint}/searchAuctions${queryString}`
+      //   );
+      //   console.log("🚀 ~ file: index.js:17 ~ auctions ~ res:", res);
+      //   setAuctions(res.data.docs);
+      // } else {
+      const res = await axios.post(`${apiEndpoint}/getAllEvents`, queryString);
       console.log("🚀 ~ file: index.js:17 ~ auctions ~ res:", res);
       setAuctions(res.data.docs);
-      }
+      // }
     } catch (error) {
       console.log("🚀 ~ file: index.js:26 ~ gameList ~ error:", error);
     }
@@ -158,10 +147,10 @@ const handleReset = () => {
                     <div className="flex space-x-[14px] items-center">
                       <input
                         type="radio"
-                        value="male"
-                        checked={selectedOption === "male"}
+                        value="ACTIVE"
+                        checked={selectedOption === "ACTIVE"}
                         onChange={(e) => handleFilterChange(e)}
-                        name="gender"
+                        name="status"
                         className="radio radio-xs"
                       />
                       <div>
@@ -169,7 +158,7 @@ const handleReset = () => {
                           htmlFor="mobileLaptop"
                           className="text-sm font-400 capitalize"
                         >
-                          Male
+                          Active
                         </label>
                       </div>
                     </div>
@@ -178,10 +167,10 @@ const handleReset = () => {
                     <div className="flex space-x-[14px] items-center">
                       <input
                         type="radio"
-                        value="female"
-                        checked={selectedOption === "female"}
+                        value="IN_PROGRESS"
+                        checked={selectedOption === "IN_PROGRESS"}
                         onChange={(e) => handleFilterChange(e)}
-                        name="gender"
+                        name="status"
                         className="radio radio-xs"
                       />
                       <div>
@@ -189,7 +178,47 @@ const handleReset = () => {
                           htmlFor="mobileLaptop"
                           className="text-sm font-400 capitalize"
                         >
-                          Female
+                          In Progress
+                        </label>
+                      </div>
+                    </div>
+                  </li>
+                  <li className="item flex justify-between items-center mb-2">
+                    <div className="flex space-x-[14px] items-center">
+                      <input
+                        type="radio"
+                        value="COMPLETED"
+                        checked={selectedOption === "COMPLETED"}
+                        onChange={(e) => handleFilterChange(e)}
+                        name="status"
+                        className="radio radio-xs"
+                      />
+                      <div>
+                        <label
+                          htmlFor="mobileLaptop"
+                          className="text-sm font-400 capitalize"
+                        >
+                          Completed
+                        </label>
+                      </div>
+                    </div>
+                  </li>
+                  <li className="item flex justify-between items-center mb-2">
+                    <div className="flex space-x-[14px] items-center">
+                      <input
+                        type="radio"
+                        value="RESULT_VERIFICATION"
+                        checked={selectedOption === "RESULT_VERIFICATION"}
+                        onChange={(e) => handleFilterChange(e)}
+                        name="status"
+                        className="radio radio-xs"
+                      />
+                      <div>
+                        <label
+                          htmlFor="mobileLaptop"
+                          className="text-sm font-400 capitalize"
+                        >
+                          Result Verification
                         </label>
                       </div>
                     </div>
@@ -199,7 +228,12 @@ const handleReset = () => {
             </div>
             <br />
             <div className="w-full">
-              <button className="btn btn-sm mx-auto w-full" onClick={() => handleReset()}>Clear</button>
+              <button
+                className="btn btn-sm mx-auto w-full"
+                onClick={() => handleReset()}
+              >
+                Clear
+              </button>
             </div>
             <button
               onClick={() => setIsActive(false)}

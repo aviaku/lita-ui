@@ -81,13 +81,11 @@ export default function Landing({ setVisible, posts, loading, getAllPosts }) {
     },
   ];
 
-
   const auctionList = async () => {
     try {
-      const res = await axios.get(
-        `${apiEndpoint}/events`,
-        // { status: "ACTIVE" }
-      );
+      const res = await axios.post(`${apiEndpoint}/getAllEvents`, {
+        status: "ACTIVE",
+      });
       console.log("🚀 ~ file: index.js:17 ~ auctions ~ res:", res);
       setAuctions(res.data.docs);
     } catch (error) {
@@ -116,11 +114,9 @@ export default function Landing({ setVisible, posts, loading, getAllPosts }) {
   };
 
   useEffect(() => {
-    if(!auctions.length)
-      auctionList();
-    if(!games.length)
-      gameList();
-    // if (!players.length) 
+    if (!auctions.length) auctionList();
+    if (!games.length) gameList();
+    // if (!players.length)
     playerss();
   }, []);
 
