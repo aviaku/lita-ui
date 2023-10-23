@@ -17,11 +17,14 @@ import {
   Watch,
 } from "../../svg";
 import { useSelector } from "react-redux";
+import { useReducer, useEffect } from "react";
 import SearchMenu from "./SearchMenu";
 import { useRef, useState } from "react";
 import AllMenu from "./AllMenu";
 import useClickOutside from "../../helpers/clickOutside";
 import UserMenu from "./userMenu";
+import { friendspage } from "../../functions/reducers";
+import { getFriendsPageInfos } from "../../functions/user";
 export default function Header({ page, getAllPosts }) {
   const { user } = useSelector((user) => ({ ...user }));
   const color = "#65676b";
@@ -36,6 +39,25 @@ export default function Header({ page, getAllPosts }) {
   useClickOutside(usermenu, () => {
     setShowUserMenu(false);
   });
+
+  const [{ loading, error, data }, dispatch] = useReducer(friendspage, {
+    loading: false,
+    data: {},
+    error: "",
+  });
+
+  useEffect(() => {
+    getData();
+  }, []);
+  const getData = async () => {
+    dispatch({ type: "FRIENDS_REQUEST" });
+    const data = await getFriendsPageInfos(user.token);
+    if (data.status === "ok") {
+      dispatch({ type: "FRIENDS_SUCCESS", payload: data.data });
+    } else {
+      dispatch({ type: "FRIENDS_ERROR", payload: data.data });
+    }
+  };
 
   return (
     <header>
@@ -138,8 +160,14 @@ export default function Header({ page, getAllPosts }) {
                 <ArrowDown />
               </div>
             </div>
-
-            {showUserMenu && <UserMenu user={user} />}
+            {showUserMenu && (
+              <UserMenu friendRequests={data?.requests?.length} user={user} />
+            )}
+            {data?.requests?.length > 0 && (
+              <div class="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full -top-2 -right-2 dark:border-gray-900">
+                {data?.requests?.length}
+              </div>
+            )}
           </div>
         </div>
       ) : (

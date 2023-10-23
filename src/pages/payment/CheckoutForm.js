@@ -42,14 +42,24 @@ export default function CheckoutForm({ depositAmount }) {
   return (
     <form id="payment-form" onSubmit={handleSubmit}>
       {/* <CardElement /> */}
-      <PaymentElement id="payment-element" />
-      <button disabled={isProcessing || !stripe || !elements} id="submit">
-        <span id="button-text">
-          {isProcessing ? "Processing ... " : "Pay now"}
-        </span>
-      </button>
-      {/* Show any error or success messages */}
-      {message && <div id="payment-message">{message}</div>}
+      <div className="form-group w-1/3 mx-auto bg-white px-5 py-10">
+        <PaymentElement id="payment-element" />
+        <br />
+        {/* align pay button to the right */}
+        <div className="flex justify-end">
+          <button
+            className="btn btn-primary"
+            disabled={isProcessing || !stripe || !elements}
+            id="submit"
+          >
+            <span id="button-text">
+              {isProcessing ? "Processing ... " : "Pay"}
+            </span>
+          </button>
+        </div>
+        {/* Show any error or success messages */}
+        {message && <div id="payment-message">{message}</div>}
+      </div>
     </form>
   );
 }

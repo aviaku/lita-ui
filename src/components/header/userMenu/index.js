@@ -5,7 +5,7 @@ import HelpSupport from "./HelpSupport";
 import SettingsPrivacy from "./SettingsPrivacy";
 import { useDispatch } from "react-redux";
 import Cookies from "js-cookie";
-export default function UserMenu({ user }) {
+export default function UserMenu({ user, friendRequests }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [visible, setVisible] = useState(0);
@@ -18,6 +18,7 @@ export default function UserMenu({ user }) {
   };
   return (
     <div className="mmenu">
+      {console.log("friendRequests", friendRequests)}
       {visible === 0 && (
         <div>
           <Link to="/profile" className="mmenu_header hover3">
@@ -34,6 +35,11 @@ export default function UserMenu({ user }) {
             <div className="mmenu_main hover3">
               <div className="small_circle">
                 <i className="all_friends_icon"></i>
+                {friendRequests > 0 && (
+                  <div class="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full -top-2 -right-2 dark:border-gray-900">
+                    {friendRequests}
+                  </div>
+                )}
               </div>
               <div className="mmenu_col">
                 <div className="mmenu_span1">Friends</div>

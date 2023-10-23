@@ -64,6 +64,7 @@ const Auction = () => {
   const [submitDisabled, setSubmitDisabled] = useState(true);
   const [auctionDateTime, setAuctionDateTime] = useState(null);
   const [alreadyBided, setAlreadyBided] = useState(false);
+  const [alreadyBought, setAlreadyBought] = useState(false);
   const [resultRanking, setResultRanking] = useState([]);
   const [screenshotValue, setScreenshotValue] = useState([]);
   const [disputeScreenshotValue, setDisputeScreenshotValue] = useState([]);
@@ -162,9 +163,14 @@ const Auction = () => {
               displayName: user?.first_name,
             });
           }
+          toastify("Bid Successfull!");
+        } else {
+          toastify("Ticket Purchased Successfully!");
         }
         setBidAmount("");
         setSubmitDisabled(true);
+        // call auctionList again
+        auctionList();
       } else {
         toastify(res.data.error);
       }
@@ -202,7 +208,10 @@ const Auction = () => {
       if (res.status === 200) {
         // setSubmitDisabled(true);
         toastify("Donation Successfull!");
+        // call auctionList again
+        auctionList();
       } else {
+        console.log("res", res);
         toastify(res.data.error);
       }
 
@@ -211,7 +220,8 @@ const Auction = () => {
         res
       );
     } catch (error) {
-      console.log(error);
+      console.log(error.response);
+      toastify(error.response.data.error);
     }
   };
 
@@ -270,10 +280,13 @@ const Auction = () => {
       } else {
         setSubmitDisabled(true);
       }
-
-      const isAlreadyBided = auc.eventMembers.find(
-        (b) => b.user._id === user?.id
-      );
+      let isAlreadyBided = null;
+      if (auc.isAuctionTicket) {
+        isAlreadyBided = auc.bids.find((b) => b.user._id === user?.id);
+      } else {
+        isAlreadyBided = auc.eventMembers.find((b) => b.user._id === user?.id);
+      }
+      console.log("isAlreadyBided", isAlreadyBided);
       if (isAlreadyBided) {
         setAlreadyBided(true);
       }
@@ -324,6 +337,8 @@ const Auction = () => {
       if (res.status === 200) {
         setResultSubmitBtnDisabled(false);
         toastify("Result Submitted Successfully!");
+        // call auctionList again
+        auctionList();
       }
     } catch (error) {
       console.log(error);
@@ -364,6 +379,8 @@ const Auction = () => {
         setDisputeSubmitBtnDisabled(false);
         setRaiseDispute(false);
         console.log(res);
+        // call auctionList again
+        auctionList();
       }
     } catch (error) {
       console.log(error);
@@ -389,6 +406,8 @@ const Auction = () => {
       if (res.status === 200) {
         setGameCredentialsSubmitBtnDisabled(false);
         toastify("Credentials Submitted Successfully!");
+        // call auctionList again
+        auctionList();
       }
     } catch (error) {
       console.log(error);
@@ -447,7 +466,7 @@ const Auction = () => {
                         type="text"
                         name="donationMessage"
                         onChange={(e) => setDonationMessage(e.target.value)}
-                        placeholder="Message to donee"
+                        placeholder="Message"
                         className="input input-bordered w-full max-w-xs"
                       />
                     </div>
