@@ -378,6 +378,7 @@ const Auction = () => {
       if (res.status === 200) {
         setDisputeSubmitBtnDisabled(false);
         setRaiseDispute(false);
+        toastify("Dispute Submitted Successfully!");
         console.log(res);
         // call auctionList again
         auctionList();
