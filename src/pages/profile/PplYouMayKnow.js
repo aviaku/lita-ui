@@ -4,17 +4,15 @@ import axios from "axios";
 import { Dots } from "../../svg";
 import { stories } from "../../data/home";
 import AddFriendSmallCard from "./AddFriendSmallCard";
-export default function PplYouMayKnow({gamesPlayed}) {
-
+export default function PplYouMayKnow({ gamesPlayed }) {
   const apiEndpoint = process.env.REACT_APP_BACKEND_URL;
   const { user } = useSelector((state) => ({ ...state }));
   const [myGames, setMyGames] = useState(false);
   const currentUrl = window.location.href.split("/");
   const lastSegmentOfUrl = currentUrl[currentUrl.length - 1];
-  console.log(lastSegmentOfUrl, 'gamesPlayed', gamesPlayed);
   let currentUsername = "";
   if (lastSegmentOfUrl === "profile") {
-    currentUsername = user.username
+    currentUsername = user.username;
   } else {
     currentUsername = lastSegmentOfUrl;
   }
@@ -25,7 +23,6 @@ export default function PplYouMayKnow({gamesPlayed}) {
           Authorization: `Bearer ${user.token}`,
         },
       });
-      console.log('xxxxxxxxxxxxx', res.data);
       setMyGames(res.data);
     } catch (error) {
       console.log("🚀 ~ file: index.js:26 ~ gameList ~ error:", error);
@@ -45,9 +42,10 @@ export default function PplYouMayKnow({gamesPlayed}) {
         </div> */}
       </div>
       <div className="pplumayknow_list">
-        {gamesPlayed && gamesPlayed?.map((item, i) => (
-          <AddFriendSmallCard item={item.game} key={i} />
-        ))}
+        {gamesPlayed &&
+          gamesPlayed?.map((item, i) => (
+            <AddFriendSmallCard item={item.game} key={i} />
+          ))}
       </div>
     </div>
   );

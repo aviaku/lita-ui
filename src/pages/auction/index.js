@@ -12,6 +12,7 @@ import { auth, firestore } from "../../config/firebase";
 import CountdownTimer from "./CountdownTimer";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { BsChatLeftTextFill } from "react-icons/bs";
 
 import firebase from "firebase/app";
 import "firebase/firestore";
@@ -428,6 +429,40 @@ const Auction = () => {
     <div>
       {/* <Nav /> */}
       <Header />
+      <div
+        onClick={() => document.getElementById("my_modal_3").showModal()}
+        className="rounded-full p-5 bg-blue-700 fixed bottom-3 right-14 text-white cursor-pointer z-50"
+      >
+        <BsChatLeftTextFill size={18} className=" " />
+      </div>
+      <dialog id="my_modal_3" className="modal">
+        <div className="modal-box">
+          <form method="dialog">
+            {/* if there is a button in form, it will close the modal */}
+            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+              ✕
+            </button>
+          </form>
+          <h3 className="font-bold text-lg">Messages</h3>
+          {auction?.donations?.map(
+            (donation) =>
+              donation?.message && (
+                <div className="chat chat-start">
+                  <div className="chat-image avatar">
+                    <div className="w-10 rounded-full">
+                      <img src={donation?.user?.picture} />
+                    </div>
+                  </div>
+                  <div className="chat-header">
+                    {donation?.user?.first_name} {donation?.user?.last_name}
+                    {/* <time className="text-xs opacity-50">12:45</time> */}
+                  </div>
+                  <div className="chat-bubble">{donation.message}</div>
+                </div>
+              )
+          )}
+        </div>
+      </dialog>
       <div className=" relative">
         <div className="container mx-auto pt-[106px]">
           {/* Product details section */}
@@ -545,9 +580,7 @@ const Auction = () => {
             </div>
             {/* <SignOut /> */}
             <div className="col-span-2 md:col-span-1 mx-2">
-              <p className="text-gray-900 dark:text-white mb-1">
-                Tournament ends in:
-              </p>
+              <p className="!text-gray-900 mb-1">Tournament ends in:</p>
               <div className="mx-auto md:!ml-0 max-w-[284px] w-full h-14 px-4 py-2 flex items-center justify-between bg-white dark:bg-dark border border-gray-300 dark:border-gray-700 rounded-xl">
                 {auctionDateTime && (
                   <CountdownTimer targetDate={auctionDateTime} />
@@ -559,16 +592,14 @@ const Auction = () => {
                 ) && (
                   <>
                     <br />
-                    <p className="text-gray-900 dark:text-white mb-1">
-                      Gameplay Info:
-                    </p>
+                    <p className="!text-gray-900 mb-1">Gameplay Info:</p>
                     <div className="mx-auto md:!ml-0 max-w-[284px] w-full h-14 px-4 py-2 flex items-center justify-between bg-white dark:bg-dark border border-gray-300 dark:border-gray-700 rounded-xl">
-                      <h3> {auction?.gameInfo} </h3>
+                      <h3 className="!text-gray-900"> {auction?.gameInfo} </h3>
                     </div>
                   </>
                 )}
               <div className="max-w-[484px] w-full">
-                <h4 className="mt-4 mb-0 text-4xl font-semibold leading-loose text-gray-900 dark:text-white">
+                <h4 className="mt-4 mb-0 text-4xl font-semibold leading-loose !text-gray-900">
                   {" "}
                   {auction?.user?.first_name} {auction?.user?.last_name}
                 </h4>
@@ -585,7 +616,7 @@ const Auction = () => {
                         <path d="M7.76667 5.32817C7.84445 5.32014 7.92223 5.31746 8 5.31746C9.47223 5.31746 10.6667 6.44514 10.6667 7.88889C10.6667 9.30853 9.47223 10.4603 8 10.4603C6.50278 10.4603 5.33334 9.30853 5.33334 7.88889C5.33334 7.81389 5.33611 7.73889 5.34445 7.66389C5.60278 7.78443 5.90278 7.88889 6.22223 7.88889C7.20278 7.88889 8 7.12014 8 6.1746C8 5.86657 7.89167 5.57728 7.76667 5.32817ZM13.35 4.04782C14.65 5.21032 15.5194 6.57907 15.9306 7.55943C16.0222 7.77103 16.0222 8.00675 15.9306 8.21835C15.5194 9.1746 14.65 10.5434 13.35 11.73C12.0417 12.9032 10.2444 13.8889 8 13.8889C5.75556 13.8889 3.95834 12.9032 2.65056 11.73C1.35056 10.5434 0.48167 9.1746 0.0683646 8.21835C-0.0227882 8.00675 -0.0227882 7.77103 0.0683646 7.55943C0.48167 6.57907 1.35056 5.21032 2.65056 4.04782C3.95834 2.87568 5.75556 1.88889 8 1.88889C10.2444 1.88889 12.0417 2.87568 13.35 4.04782ZM8 4.03175C5.79167 4.03175 4 5.75943 4 7.88889C4 10.0184 5.79167 11.746 8 11.746C10.2083 11.746 12 10.0184 12 7.88889C12 5.75943 10.2083 4.03175 8 4.03175Z" />
                       </svg>
                     </button>
-                    <small className="ml-2 font-medium text-gray-900 dark:text-white">
+                    <small className="ml-2 font-medium text-gray-900">
                       {" "}
                       2536{" "}
                     </small>
@@ -602,7 +633,7 @@ const Auction = () => {
                         <path d="M7.97539 3.4724L8.30352 3.14482C9.21953 2.25205 10.4883 1.84572 11.7352 2.05326C13.6191 2.36716 15 3.9974 15 5.90873V6.06732C15 7.20208 14.5297 8.28763 13.6984 9.06146L8.75742 13.6744C8.55234 13.8658 8.28164 13.9724 8 13.9724C7.71836 13.9724 7.44766 13.8658 7.24258 13.6744L2.30129 9.06146C1.47113 8.28763 1 7.20208 1 6.06732V5.90873C1 3.9974 2.38141 2.36716 4.26484 2.05326C5.48711 1.84572 6.78047 2.25205 7.67188 3.14482L7.97539 3.4724ZM7.97539 4.71107L7.05391 3.76224C6.36211 3.07072 5.375 2.75517 4.40977 2.91623C2.94715 3.16013 1.85039 4.42669 1.85039 5.90873V6.06732C1.85039 6.96146 2.24551 7.81185 2.8982 8.42162L7.83867 13.0345C7.88242 13.0755 7.93984 13.0974 7.97539 13.0974C8.06016 13.0974 8.11758 13.0755 8.16133 13.0345L13.1023 8.42162C13.7531 7.81185 14.125 6.96146 14.125 6.06732V5.90873C14.125 4.42669 13.0531 3.16013 11.5902 2.91623C10.6004 2.75517 9.63789 3.07072 8.94609 3.76224L7.97539 4.71107Z" />
                       </svg>
                     </button>
-                    <small className="ml-2 font-medium text-gray-900 dark:text-white">
+                    <small className="ml-2 font-medium text-gray-900">
                       {" "}
                       368{" "}
                     </small>
@@ -619,13 +650,13 @@ const Auction = () => {
                         <path d="M15 4C15 5.65625 13.6562 7 12 7C11.0969 7 10.2875 6.6 9.7375 5.96875L6.93437 7.37187C6.97812 7.575 6.97188 7.78438 6.97188 7.97188C6.97188 8.21563 6.97812 8.425 6.93437 8.62813L9.7375 10.0031C10.2875 9.4 11.0969 8.97188 12 8.97188C13.6562 8.97188 15 10.3156 15 12C15 13.6562 13.6562 15 12 15C10.3156 15 9 13.6562 9 12C9 11.7844 9.02188 11.575 9.06563 11.3719L6.2625 9.96875C5.7125 10.6 4.90312 11 4 11C2.34312 11 1 9.65625 1 7.97188C1 6.31563 2.34312 4.97188 4 4.97188C4.90312 4.97188 5.7125 5.4 6.2625 6.00313L9.06563 4.62813C9.02188 4.425 9 4.21563 9 4C9 2.34312 10.3156 1 12 1C13.6562 1 15 2.34312 15 4ZM3.97187 9.5C4.82812 9.5 5.47188 8.82812 5.47188 8C5.47188 7.17188 4.82812 6.5 3.97187 6.5C3.17156 6.5 2.47187 7.17188 2.47187 8C2.47187 8.82812 3.17156 9.5 3.97187 9.5ZM12 2.5C11.1719 2.5 10.5 3.17188 10.5 4C10.5 4.82812 11.1719 5.5 12 5.5C12.8281 5.5 13.5 4.82812 13.5 4C13.5 3.17188 12.8281 2.5 12 2.5ZM12 13.5C12.8281 13.5 13.5 12.8281 13.5 12C13.5 11.1719 12.8281 10.5 12 10.5C11.1719 10.5 10.5 11.1719 10.5 12C10.5 12.8281 11.1719 13.5 12 13.5Z" />
                       </svg>
                     </button>
-                    <small className="ml-2 font-medium text-gray-900 dark:text-white">
+                    <small className="ml-2 font-medium text-gray-900">
                       {" "}
                       52{" "}
                     </small>
                   </div>
                 </div> */}
-                <p className="font-normal text-sm text-justify text-gray-700 dark:text-gray-400">
+                <p className="font-normal text-sm text-justify !text-gray-700">
                   {" "}
                   {auction?.description}{" "}
                 </p>
@@ -633,17 +664,14 @@ const Auction = () => {
               <div>
                 <div className="mt-4 mb-6 max-w-[364px] w-full flex items-center justify-between">
                   <div>
-                    <p className="font-normal text-gray-700 dark:text-gray-400 mb-1">
-                      {" "}
-                      Game:{" "}
-                    </p>
+                    <p className="font-normal !text-gray-700 mb-1"> Game: </p>
                     <div className="flex items-center">
                       <img
                         alt=""
                         src={auction?.game?.picture}
                         className="w-10 h-10 mr-3 rounded-full outline outline-1 outline-white"
                       />
-                      <p className="flex items-center font-medium text-gray-900 dark:text-white">
+                      <p className="flex items-center font-medium text-gray-900">
                         {" "}
                         {auction?.game?.name}{" "}
                         <svg
@@ -659,12 +687,12 @@ const Auction = () => {
                     </div>
                   </div>
                   <div>
-                    <p className="font-normal text-gray-700 dark:text-gray-400 mb-1">
+                    <p className="font-normal text-gray-700 mb-1">
                       {" "}
                       Ticket Price:{" "}
                     </p>
                     <div className="flex items-center">
-                      <p className="font-medium text-gray-900 dark:text-white">
+                      <p className="font-medium text-gray-900">
                         {" "}
                         ₹{auction && auction?.ticketPrice}{" "}
                       </p>
@@ -675,11 +703,11 @@ const Auction = () => {
                 <div className="mt-7">
                   {parseInt(highestBid) ? (
                     <div className="flex items-center mt-2">
-                      <p className="font-normal text-gray-900 dark:text-white mr-3">
+                      <p className="font-normal text-gray-900 mr-3">
                         {" "}
                         Highest Bid:{" "}
                       </p>
-                      <h6 className="font-semibold text-2xl text-gray-900 dark:text-white">
+                      <h6 className="font-semibold text-2xl text-gray-900">
                         {" "}
                         ₹{messages && messages[messages.length - 1]?.text}{" "}
                       </h6>
@@ -1428,7 +1456,7 @@ const Auction = () => {
                     </h2>
                     <div className="p-4 col-span-2 md:col-span-1 bg-white dark:bg-dark rounded-lg outline outline-1 hover:outline-2 outline-gray-300 hover:outline-primary-500 dark:hover:outline-primary-500 dark:outline-gray-800 shadow-outline hover:shadow-hover text-center">
                       <div className="flex text-center justify-center border rounded p-3">
-                        <div className="overflow-x-auto w-full">
+                        <div className="h-[200px] overflow-x-auto w-full">
                           <table className="table w-full">
                             <tbody>
                               {/* row 1 */}
