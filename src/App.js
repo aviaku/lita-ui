@@ -121,6 +121,7 @@ function App() {
             exact
           />
           <Route path="/activate/:token" element={<Activate />} exact />
+          <Route path="/createAuction" element={<CreateAuction />} exact />
         </Route>
         <Route element={<NotLoggedInRoutes />}>
           <Route path="/login" element={<Login />} exact />
@@ -130,7 +131,6 @@ function App() {
         <Route path="/gamers" element={<Gamers />} exact />
         <Route path="/auctions" element={<AuctionList />} exact />
         <Route path="/auction/:id" element={<Auction />} exact />
-        <Route path="/createAuction" element={<CreateAuction />} exact />
         <Route path="/myAuctions" element={<MyAuctions />} exact />
         <Route path="/myBids" element={<MyBids />} exact />
         <Route path="/admin/createGame" element={<CreateGame />} exact />
