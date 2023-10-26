@@ -27,26 +27,6 @@ import AuctionResult from "./result";
 import { toastify } from "../../helpers/toastify";
 import Header from "../../components/header";
 
-// function Auction() {
-//   const [user] = useAuthState(auth);
-
-//   return (
-//     <div className="App">
-//       <section>{user ? <Abc /> : <GoogleSignIn />}</section>
-//     </div>
-//   );
-// }
-
-// function SignOut() {
-//   return (
-//     auth.currentUser && (
-//       <button className="sign-out" onClick={() => auth.signOut()}>
-//         Sign Out
-//       </button>
-//     )
-//   );
-// }
-
 const Auction = () => {
   const { id } = useParams();
 
@@ -175,11 +155,6 @@ const Auction = () => {
       } else {
         toastify(res.data.error);
       }
-
-      console.log(
-        "resssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
-        res
-      );
     } catch (error) {
       console.log(error);
     }
@@ -187,8 +162,6 @@ const Auction = () => {
 
   const donate = async (e) => {
     e.preventDefault();
-
-    console.log("Hewewewewe");
 
     try {
       const res = await axios.post(
@@ -424,7 +397,6 @@ const Auction = () => {
   const NOW_IN_MS = new Date().getTime();
 
   const dateTimeAfterThreeDays = NOW_IN_MS + THREE_DAYS_IN_MS;
-  // return "Hi"
   return (
     <div>
       {/* <Nav /> */}
