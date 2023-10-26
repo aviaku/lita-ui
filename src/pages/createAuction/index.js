@@ -15,6 +15,7 @@ const initialValues = {
   gameId: "",
   numberOfTickets: "",
   ticketPrice: "",
+  hostShare: "",
   dateTime: "",
   description: "",
   eventMembers: [],
@@ -355,6 +356,27 @@ const CreateAuction = () => {
                       <label className="label">
                         <span className="label-text-alt text-red-500">
                           {errors.description}
+                        </span>
+                      </label>
+                    ) : null}
+                  </div>
+                  <div className="form-control w-full max-w-xs lg:w-[48%] px-2">
+                    <label className="label">
+                      <span className="label-text">Host Share</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="1000"
+                      name="hostShare"
+                      value={values.hostShare}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      className="input input-bordered w-full max-w-xs"
+                    />
+                    {errors.hostShare && touched.hostShare ? (
+                      <label className="label">
+                        <span className="label-text-alt text-red-500">
+                          {errors.hostShare}
                         </span>
                       </label>
                     ) : null}
