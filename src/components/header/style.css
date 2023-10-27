@@ -223,7 +223,7 @@ header {
   background: var(--bg-secondary);
   border-radius: 10px;
   height: 90vh;
-  width: 575px;
+  width: 300px;
   padding: 10px 1rem;
   box-shadow: -2px 1px 5px 2px var(--shadow-1);
   user-select: none;
@@ -235,7 +235,7 @@ header {
   margin-bottom: 10px;
 }
 .all_menu_wrap {
-  display: grid;
+  /* display: grid; */
   grid-template-columns: 1.7fr 1fr;
   gap: 1rem;
   overflow-y: auto;
@@ -593,13 +593,13 @@ header {
 }
 @media (max-width: 400px) {
   .header_right .circle_icon:nth-child(3) {
-    display: none;
+    /* display: none; */
   }
   .mmenu {
     width: 290px;
   }
   .all_menu {
-    width: 310px;
+    width: 256px;
     left: -10rem;
   }
   .search_area {

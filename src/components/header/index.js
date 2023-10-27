@@ -115,6 +115,23 @@ export default function Header({ page, getAllPosts }) {
       </div> */}
       {Cookies.get("user") ? (
         <div className="header_right">
+          <div
+            className={`circle_icon hover1 ${showAllMenu && "active_header"}`}
+            ref={allmenu}
+          >
+            <div
+              onClick={() => {
+                setShowAllMenu((prev) => !prev);
+              }}
+            >
+              <div className="circle_icon hover1">
+                <Notifications />
+                <div className="right_notification">5</div>
+              </div>
+            </div>
+
+            {showAllMenu && <AllMenu />}
+          </div>
           <Link
             to="/profile"
             className={`profile_link hover1 ${
@@ -142,10 +159,6 @@ export default function Header({ page, getAllPosts }) {
         </div>
         <div className="circle_icon hover1">
           <Messenger />
-        </div> */}
-          {/* <div className="circle_icon hover1">
-          <Notifications />
-          <div className="right_notification">5</div>
         </div> */}
           <div
             className={`circle_icon hover1 ${showUserMenu && "active_header"}`}

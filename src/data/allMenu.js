@@ -1,8 +1,8 @@
 export const menu = [
   {
-    name: "Campus",
+    name: "Event",
     icon: "campus",
-    description: "A unique, exclusive space for college students on Facebook.",
+    description: "Abhishek bought a ticket of your event",
   },
   {
     name: "Events",
