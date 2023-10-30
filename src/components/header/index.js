@@ -16,6 +16,7 @@ import {
   Search,
   Watch,
 } from "../../svg";
+import axios from "axios";
 import { useSelector } from "react-redux";
 import { useReducer, useEffect } from "react";
 import SearchMenu from "./SearchMenu";
@@ -31,6 +32,7 @@ export default function Header({ page, getAllPosts }) {
   const [showSearchMenu, setShowSearchMenu] = useState(false);
   const [showAllMenu, setShowAllMenu] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [notifications, setNotifications] = useState([]);
   const allmenu = useRef(null);
   const usermenu = useRef(null);
   useClickOutside(allmenu, () => {
@@ -58,6 +60,30 @@ export default function Header({ page, getAllPosts }) {
       dispatch({ type: "FRIENDS_ERROR", payload: data.data });
     }
   };
+
+  // fetch notifications from API
+  const getNotifications = async () => {
+    try {
+      const res = await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}/getNotificationByUserId/${user.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        }
+      );
+      console.log(res.data);
+      if (res.status === 200) {
+        setNotifications(res.data);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useState(() => {
+    getNotifications();
+  }, []);
 
   return (
     <header>
@@ -126,11 +152,15 @@ export default function Header({ page, getAllPosts }) {
             >
               <div className="circle_icon hover1">
                 <Notifications />
-                <div className="right_notification">5</div>
+                {notifications.length > 0 && (
+                  <div className="right_notification">
+                    {notifications.length}
+                  </div>
+                )}
               </div>
             </div>
 
-            {showAllMenu && <AllMenu />}
+            {showAllMenu && <AllMenu notifications={notifications} />}
           </div>
           <Link
             to="/profile"

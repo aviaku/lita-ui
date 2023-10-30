@@ -2,7 +2,7 @@ import { useRef } from "react";
 import { menu, create } from "../../data/allMenu";
 import useClickOutside from "../../helpers/clickOutside";
 import AllMenuItem from "./AllMenuItem";
-export default function AllMenu() {
+export default function AllMenu({ notifications }) {
   return (
     <div className="all_menu">
       {/* <div className="all_menu_header">Menu</div> */}
@@ -14,12 +14,14 @@ export default function AllMenu() {
           </div> */}
           <div className="all_menu_group">
             <div className="all_menu_group_header">Notifications</div>
-            {menu.slice(0, 6).map((item, i) => (
+            {notifications.slice(0, 6).map((item, i) => (
               <AllMenuItem
-                name={item.name}
+                name={item.type}
                 description={item.description}
                 icon={item.icon}
                 key={i}
+                event={item.event}
+                notificationId={item._id}
               />
             ))}
           </div>
