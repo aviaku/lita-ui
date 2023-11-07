@@ -30,6 +30,8 @@ import PrivacyPolicyPage from "./pages/privacyPolicy";
 import Payment from "./pages/payment/Payment";
 import Completion from "./pages/payment/Completion";
 import Success from "./pages/payment/Success";
+import MoneyWithdrawal from "./pages/withdrawal";
+import Kyc from "./pages/kyc";
 
 function App() {
   const [visible, setVisible] = useState(false);
@@ -128,6 +130,8 @@ function App() {
         </Route>
 
         <Route path="/wallet" element={<Wallet />} exact />
+        <Route path="/withdrawal" element={<MoneyWithdrawal />} exact />
+        <Route path="/kyc" element={<Kyc />} exact />
         <Route path="/gamers" element={<Gamers />} exact />
         <Route path="/auctions" element={<AuctionList />} exact />
         <Route path="/auction/:id" element={<Auction />} exact />

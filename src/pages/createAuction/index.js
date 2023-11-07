@@ -15,7 +15,7 @@ const initialValues = {
   gameId: "",
   numberOfTickets: "",
   ticketPrice: "",
-  hostShare: "",
+  hostPercentage: 0,
   dateTime: "",
   description: "",
   eventMembers: [],
@@ -31,6 +31,7 @@ const CreateAuction = () => {
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [numOfTickets, setNumOfTickets] = useState(0);
   const [percentageDivision, setPercentageDivision] = useState([]);
+  const [participantShareMsg, setParticipantShareMsg] = useState("");
   const [errorMsg, setErrorMsg] = useState([]);
 
   let prizeDistributionInfo = "";
@@ -365,18 +366,28 @@ const CreateAuction = () => {
                       <span className="label-text">Host Share</span>
                     </label>
                     <input
-                      type="text"
-                      placeholder="1000"
-                      name="hostShare"
-                      value={values.hostShare}
+                      type="number"
+                      placeholder="Host Percentage"
+                      name="hostPercentage"
+                      value={values.hostPercentage}
+                      min={1}
+                      max={99}
                       onChange={handleChange}
                       onBlur={handleBlur}
                       className="input input-bordered w-full max-w-xs"
                     />
-                    {errors.hostShare && touched.hostShare ? (
+                    <label className="label">
+                      <span className="label-text-alt">
+                        {values.hostPercentage &&
+                          `Rest ${
+                            100 - values.hostPercentage
+                          } will distribute among players`}
+                      </span>
+                    </label>
+                    {errors.hostPercentage && touched.hostPercentage ? (
                       <label className="label">
                         <span className="label-text-alt text-red-500">
-                          {errors.hostShare}
+                          {errors.hostPercentage}
                         </span>
                       </label>
                     ) : null}

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import useRazorpay from "react-razorpay";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Header from "../../components/header";
 import Nav from "../../components/headerNoAuth";
 import { useSelector } from "react-redux";
@@ -63,9 +63,16 @@ const Wallet = ({ depositAmount }) => {
       <div class="min-h-screen flex items-center justify-center">
         <div class="bg-white rounded-lg shadow-lg p-8 max-w-md w-full">
           <h2 class="text-2xl font-semibold mb-4">My Wallet</h2>
-          <div class="mb-6">
-            <h3 class="text-lg font-semibold mb-2">Balance</h3>
-            <p class="text-gray-600">INR {user.balance}</p>
+          <div className="flex justify-between">
+            <div class="mb-6">
+              <h3 class="text-lg font-semibold mb-2">Balance</h3>
+              <p class="text-gray-600">INR {user.balance}</p>
+            </div>
+            <Link to="/withdrawal">
+              <button class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300">
+                Withdraw Money
+              </button>
+            </Link>
           </div>
           <div class="mb-6">
             <h3 class="text-lg font-semibold mb-2">Recent Transactions</h3>
