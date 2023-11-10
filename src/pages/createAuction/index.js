@@ -378,7 +378,7 @@ const CreateAuction = () => {
                     />
                     <label className="label">
                       <span className="label-text-alt">
-                        {values.hostPercentage &&
+                        {values.hostPercentage > 0 &&
                           `Rest ${
                             100 - values.hostPercentage
                           } will distribute among players`}

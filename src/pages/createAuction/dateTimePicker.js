@@ -25,7 +25,11 @@ const DateTimePicker = ({
         onChange={handleChange}
         onBlur={handleBlur}
         minDate={new Date()}
-        minTime={setHours(setMinutes(new Date(), 0), hour + 1)}
+        minTime={
+          selectedDate > new Date()
+            ? setHours(setMinutes(new Date(), 0), 0)
+            : setHours(setMinutes(new Date(), 0), hour + 1)
+        }
         maxTime={setHours(setMinutes(new Date(), 59), 23)}
         showTimeSelect
         timeFormat="HH:mm"

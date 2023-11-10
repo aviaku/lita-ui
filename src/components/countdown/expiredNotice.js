@@ -1,7 +1,7 @@
 const ExpiredNoticeComp = () => {
   return (
     <div className="expired-notice">
-      <span>Auction ended</span>
+      <span>Tournament ended</span>
     </div>
   );
 };
