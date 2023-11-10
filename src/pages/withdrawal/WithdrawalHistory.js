@@ -63,7 +63,7 @@ const WithdrawalHistory = () => {
                     {transaction.transactionId}
                   </td>
                   <td className="py-2 px-4 border-b">
-                    ${transaction.withdrawalAmount}
+                    INR.{transaction.withdrawalAmount.toFixed(2)}
                   </td>
                   <td className="py-2 px-4 border-b">
                     {transaction.processedAt}
