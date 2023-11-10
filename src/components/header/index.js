@@ -53,7 +53,7 @@ export default function Header({ page, getAllPosts }) {
   }, []);
   const getData = async () => {
     dispatch({ type: "FRIENDS_REQUEST" });
-    const data = await getFriendsPageInfos(user.token);
+    const data = await getFriendsPageInfos(user?.token);
     if (data.status === "ok") {
       dispatch({ type: "FRIENDS_SUCCESS", payload: data.data });
     } else {
@@ -68,7 +68,7 @@ export default function Header({ page, getAllPosts }) {
         `${process.env.REACT_APP_BACKEND_URL}/getNotificationByUserId/${user.id}`,
         {
           headers: {
-            Authorization: `Bearer ${user.token}`,
+            Authorization: `Bearer ${user?.token}`,
           },
         }
       );
@@ -111,7 +111,7 @@ export default function Header({ page, getAllPosts }) {
         <SearchMenu
           color={color}
           setShowSearchMenu={setShowSearchMenu}
-          token={user.token}
+          token={user?.token}
         />
       )}
       {/* <div className="header_middle">

@@ -58,9 +58,17 @@ const Withdrawal = () => {
       <div className="container mx-auto p-4">
         <h1 className="text-2xl font-semibold mb-4">Withdrawal Page</h1>
         <div className="bg-white rounded-lg p-6 shadow-md">
-          <div className="mb-4">
-            <p className="text-lg">Available Balance:</p>
-            <p className="text-2xl font-semibold">INR.{balance.toFixed(2)}</p>
+          <div className=" flex justify-between mb-4">
+            <div className="mb-4">
+              <p className="text-lg">Available Balance:</p>
+              <p className="text-2xl font-semibold">INR.{balance.toFixed(2)}</p>
+            </div>
+            <button
+              className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-md"
+              to="/withdrawal-history"
+            >
+              Withdrawal History
+            </button>
           </div>
           <div className="mb-4">
             <label
