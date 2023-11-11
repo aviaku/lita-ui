@@ -9,7 +9,7 @@ const LandingPageLoader = ({ ...props }) => {
       ? windowSize.innerWidth - 200
       : windowSize.innerWidth;
   const heading = { width: 140, height: 24 };
-  const row = 2;
+  const row = 1;
   let column = 5;
   if (windowSize.innerWidth < 768) {
     column = 1;
