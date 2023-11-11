@@ -13,6 +13,7 @@ import { Link } from "react-router-dom";
 import Header from "../../components/header";
 import Nav from "../../components/headerNoAuth/index";
 import Card5 from "../../components/card/card5";
+import LandingPageLoader from "./LandingPageLoader";
 export default function Landing({ setVisible, posts, loading, getAllPosts }) {
   const { user } = useSelector((state) => ({ ...state }));
   console.log("User", user);
@@ -21,6 +22,9 @@ export default function Landing({ setVisible, posts, loading, getAllPosts }) {
   const [games, setGames] = useState([]);
   const [gamers, setGamers] = useState([]);
   const [auctions, setAuctions] = useState([]);
+  const [isGamersLoading, setIsGamersLoading] = useState(false);
+  const [isGamesLoading, setIsGamesLoading] = useState(false);
+  const [isAuctionsLoading, setIsAuctionsLoading] = useState(false);
 
   const apiEndpoint = process.env.REACT_APP_BACKEND_URL;
 
@@ -83,11 +87,13 @@ export default function Landing({ setVisible, posts, loading, getAllPosts }) {
 
   const auctionList = async () => {
     try {
+      setIsAuctionsLoading(true);
       const res = await axios.post(`${apiEndpoint}/getAllEvents`, {
         status: "ACTIVE",
       });
       console.log("🚀 ~ file: index.js:17 ~ auctions ~ res:", res);
       setAuctions(res.data.docs);
+      setIsAuctionsLoading(false);
     } catch (error) {
       console.log("🚀 ~ file: index.js:26 ~ gameList ~ error:", error);
     }
@@ -95,9 +101,11 @@ export default function Landing({ setVisible, posts, loading, getAllPosts }) {
 
   const playerss = async () => {
     try {
+      setIsGamersLoading(true);
       const res = await axios.get(`${apiEndpoint}/getUserGamers`);
       console.log("🚀 ~ file: index.js:17 ~ Players ~ res:", res);
       setGamers(res.data);
+      setIsGamersLoading(false);
     } catch (error) {
       console.log("🚀 ~ file: index.js:26 ~ gameList ~ error:", error);
     }
@@ -105,9 +113,11 @@ export default function Landing({ setVisible, posts, loading, getAllPosts }) {
 
   const gameList = async () => {
     try {
+      setIsGamesLoading(true);
       const res = await axios.get(`${apiEndpoint}/getAllGames`);
       console.log("🚀 ~ file: index.js:17 ~ games ~ res:", res);
       setGames(res.data);
+      setIsGamesLoading(false);
     } catch (error) {
       console.log("🚀 ~ file: index.js:26 ~ gameList ~ error:", error);
     }
@@ -229,18 +239,22 @@ export default function Landing({ setVisible, posts, loading, getAllPosts }) {
               </Link> */}
             </div>
             <ScrollingCarousel>
-              {gamers.map((gamer) => (
-                <Card1
-                  name={
-                    gamer.userInfo.first_name + " " + gamer.userInfo.last_name
-                  }
-                  // star={gamer.userInfo.star}
-                  // isLiked={gamer.userInfo.isLiked}
-                  image={gamer.userInfo.picture}
-                  username={gamer.userInfo.username}
-                  // minBid={gamer.userInfo.minBid}
-                />
-              ))}
+              {!isGamersLoading ? (
+                gamers.map((gamer) => (
+                  <Card1
+                    name={
+                      gamer.userInfo.first_name + " " + gamer.userInfo.last_name
+                    }
+                    // star={gamer.userInfo.star}
+                    // isLiked={gamer.userInfo.isLiked}
+                    image={gamer.userInfo.picture}
+                    username={gamer.userInfo.username}
+                    // minBid={gamer.userInfo.minBid}
+                  />
+                ))
+              ) : (
+                <LandingPageLoader />
+              )}
             </ScrollingCarousel>
           </div>
         </div>
@@ -258,9 +272,13 @@ export default function Landing({ setVisible, posts, loading, getAllPosts }) {
               </button>
             </div>
             <ScrollingCarousel>
-              {games.map((game) => (
-                <Card2 name={game.name} picture={game.picture} />
-              ))}
+              {!isGamesLoading ? (
+                games.map((game) => (
+                  <Card2 name={game.name} picture={game.picture} />
+                ))
+              ) : (
+                <LandingPageLoader />
+              )}
             </ScrollingCarousel>
           </div>
         </div>
@@ -280,7 +298,7 @@ export default function Landing({ setVisible, posts, loading, getAllPosts }) {
               </Link>
             </div>
             <ScrollingCarousel>
-              {auctions &&
+              {auctions && !isAuctionsLoading ? (
                 auctions.map((auction) => (
                   <Card3
                     _id={auction._id}
@@ -290,7 +308,10 @@ export default function Landing({ setVisible, posts, loading, getAllPosts }) {
                     user={auction.user}
                     bids={auction.bid}
                   />
-                ))}
+                ))
+              ) : (
+                <LandingPageLoader />
+              )}
             </ScrollingCarousel>
           </div>
         </div>

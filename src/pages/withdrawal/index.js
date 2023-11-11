@@ -13,6 +13,7 @@ const Withdrawal = () => {
   useEffect(() => {
     setBalance(user.balance);
   }, [user]);
+
   const handleWithdrawal = async () => {
     const amount = parseFloat(withdrawalAmount);
 
@@ -21,15 +22,26 @@ const Withdrawal = () => {
     } else if (amount > balance) {
       setValidationMessage("Insufficient funds!");
     } else {
+      const items = {
+        items: [
+          {
+            recipient_type: "EMAIL",
+            amount: {
+              value: withdrawalAmount, // Replace with the actual amount
+              currency: "INR", // Replace with the actual currency code
+            },
+            receiver: user.email, // Replace with the recipient's email
+            note: "Thank you.",
+          },
+        ],
+      };
+
       // Withdrawal logic
       try {
         const response = await axios.post(
-          `${process.env.REACT_APP_BACKEND_URL}/request-withdrawal`,
+          `${process.env.REACT_APP_BACKEND_URL}/paypal/send-payout`,
           {
-            userId: user.id,
-            withdrawalAmount: parseInt(amount),
-            bankDetails: user.bankDetails,
-            notes,
+            items,
           },
           {
             headers: {
@@ -51,6 +63,45 @@ const Withdrawal = () => {
       }
     }
   };
+
+  // const handleWithdrawal = async () => {
+  //   const amount = parseFloat(withdrawalAmount);
+
+  //   if (amount <= 0 || isNaN(amount)) {
+  //     setValidationMessage("Please enter a valid withdrawal amount.");
+  //   } else if (amount > balance) {
+  //     setValidationMessage("Insufficient funds!");
+  //   } else {
+  //     // Withdrawal logic
+  //     try {
+  //       const response = await axios.post(
+  //         `${process.env.REACT_APP_BACKEND_URL}/request-withdrawal`,
+  //         {
+  //           userId: user.id,
+  //           withdrawalAmount: parseInt(amount),
+  //           bankDetails: user.bankDetails,
+  //           notes,
+  //         },
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${user.token}`,
+  //           },
+  //         }
+  //       );
+  //       console.log(response);
+  //       if (response.status !== 200) {
+  //         setValidationMessage("Something went wrong.");
+  //         return;
+  //       }
+  //       setBalance(balance - amount);
+  //       setWithdrawalAmount("");
+  //       setValidationMessage("Withdrawal request submitted successfully.");
+  //     } catch (error) {
+  //       console.log(error);
+  //       setValidationMessage("Something went wrong.");
+  //     }
+  //   }
+  // };
 
   return (
     <>

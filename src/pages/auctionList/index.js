@@ -4,10 +4,12 @@ import { useSelector } from "react-redux";
 import Card6 from "../../components/card/Card6";
 import Nav from "../../components/headerNoAuth/index";
 import Header from "../../components/header";
+import AuctionListLoader from "./AuctionListLoader";
 
 const AuctionList = () => {
   const [isActive, setIsActive] = useState(false);
   const [auctions, setAuctions] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const { user } = useSelector((state) => ({ ...state }));
   const [filters, setFilters] = useState({});
   const [filertsApplied, setFiltersApplied] = useState(false);
@@ -44,6 +46,7 @@ const AuctionList = () => {
 
   const auctionList = async (queryString = null) => {
     try {
+      setIsLoading(true);
       // if (queryString) {
       //   const res = await axios.get(
       //     `${apiEndpoint}/searchAuctions${queryString}`
@@ -54,6 +57,7 @@ const AuctionList = () => {
       const res = await axios.post(`${apiEndpoint}/getAllEvents`, queryString);
       console.log("🚀 ~ file: index.js:17 ~ auctions ~ res:", res);
       setAuctions(res.data.docs);
+      setIsLoading(false);
       // }
     } catch (error) {
       console.log("🚀 ~ file: index.js:26 ~ gameList ~ error:", error);
@@ -305,7 +309,7 @@ const AuctionList = () => {
           </button>
           {/* </div> */}
           <div className="grid xl:grid-cols-4 sm:grid-cols-3 grid-cols-1  xl:gap-[30px] gap-5 mb-[40px]">
-            {auctions &&
+            {auctions.length && !isLoading ? (
               auctions.map((auction) => (
                 <Card6
                   _id={auction._id}
@@ -315,7 +319,10 @@ const AuctionList = () => {
                   user={auction.user}
                   bids={auction.bid}
                 />
-              ))}
+              ))
+            ) : (
+              <AuctionListLoader />
+            )}
           </div>
         </div>
       </div>
