@@ -1,12 +1,23 @@
 import { useCallback, useEffect, useState } from "react";
 import useRazorpay from "react-razorpay";
+import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import Header from "../../components/header";
 import Nav from "../../components/headerNoAuth";
 import { useSelector } from "react-redux";
+import Web3 from "web3";
+import { contractABI } from "../../config/contractABI";
 
 const Wallet = ({ depositAmount }) => {
   const [Razorpay, isLoaded] = useRazorpay();
+
+  const [userAddress, setUserAddress] = useState("");
+  const [tokenBalance, setTokenBalance] = useState("");
+  const [tokenAdded, setTokenAdded] = useState(false);
+  const [error, setError] = useState("");
+
+  const contractAddress = "0xf28B53320913F500c0C28fd3b64b505015791245";
+  const tokenAddress = "0xf28B53320913F500c0C28fd3b64b505015791245";
 
   const handlePayment = useCallback(async () => {
     // const order = await createOrder(params); //order id return from backend
@@ -56,6 +67,168 @@ const Wallet = ({ depositAmount }) => {
     navigate("/payment", { state: { amount: amount } });
   };
 
+  const isTokenAdded = async () => {
+    // Request account access
+    await window.ethereum.request({
+      method: "eth_requestAccounts",
+    });
+
+    // Check if the token is already added to MetaMask
+    const isTokenAdded = await window.ethereum.request({
+      method: "wallet_watchAsset",
+      params: {
+        type: "ERC20",
+        options: {
+          address: contractAddress,
+          symbol: "ITST", // Provide the correct symbol
+          decimals: 18, // Provide the correct decimals
+        },
+      },
+    });
+
+    if (isTokenAdded) {
+      return setTokenAdded(true);
+    }
+    // // Check if the token is already added
+    // const isTokenAdded = addedTokens.some(
+    //   (token) => token.address.toLowerCase() === tokenAddress.toLowerCase()
+    // );
+
+    // if (isTokenAdded) {
+    //   return setTokenAdded(true);
+    //   alert("Token is already added to MetaMask");
+    // }
+  };
+
+  const handleAddToken = async () => {
+    // Check if MetaMask is installed
+    if (!window.ethereum) {
+      alert("Please install MetaMask to use this feature");
+      return;
+    }
+
+    try {
+      // Request account access
+      await window.ethereum.request({
+        method: "eth_requestAccounts",
+      });
+
+      // Add token to MetaMask
+      const tokenSymbol = "ITST";
+      const tokenDecimals = 18;
+      const tokenImage =
+        "https://www.google.com/url?sa=i&url=https%3A%2F%2Fcryptologos.cc%2Fenergy-web-token&psig=AOvVaw02V9lZ9qbAyWviKZBEuo9T&ust=1700369134531000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCOCX6OPezIIDFQAAAAAdAAAAABAR";
+
+      await window.ethereum.request({
+        method: "wallet_watchAsset",
+        params: {
+          type: "ERC20",
+          options: {
+            address: tokenAddress,
+            symbol: tokenSymbol,
+            decimals: tokenDecimals,
+            image: tokenImage,
+          },
+        },
+      });
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Error adding token to MetaMask. Please try again.");
+    }
+  };
+
+  const transferCustomToken = async (e) => {
+    e.preventDefault();
+    try {
+      const web3 = new Web3(window.ethereum);
+
+      // Instantiate the ERC20 contract object
+      const contract = new web3.eth.Contract(contractABI, contractAddress);
+
+      // Get the balance of the custom token from the sender's account
+      const senderBalance = await contract.methods
+        .balanceOf(userAddress)
+        .call();
+
+      // Check if the sender has enough balance to transfer the tokens
+      if (senderBalance < amount) {
+        console.log("Insufficient balance");
+        setError("Insufficient balance");
+        return;
+      }
+      console.log(senderBalance, amount);
+
+      // Send the custom tokens from the sender's account to the recipient's account
+      const transfer = await contract.methods
+        .transfer("0xfbe6f99D39FE5826Dac948bD046BbDB4e2624643", amount)
+        .send({ from: userAddress });
+      console.log("Transfer:", transfer);
+      if (transfer.blockHash) {
+        try {
+          const res = await axios.post(
+            `${process.env.REACT_APP_BACKEND_URL}/addBalance`,
+            { userId: user.id, amount: parseInt(amount) / 1000000000000000000 },
+            {
+              headers: {
+                Authorization: `Bearer ${user.token}`,
+              },
+            }
+          );
+          console.log(res.data);
+          if (res.status === 200) {
+            navigate("/success");
+          }
+        } catch (error) {}
+      }
+      // Update the state of the component to reflect the transfer
+      // ...
+    } catch (err) {
+      console.log(err);
+      setError(err.message);
+    }
+  };
+
+  useEffect(() => {
+    // isTokenAdded();
+    // Function to get user's Ethereum address
+    const getUserAddress = async () => {
+      if (window.ethereum) {
+        try {
+          const accounts = await window.ethereum.request({
+            method: "eth_requestAccounts",
+          });
+          setUserAddress(accounts[0]);
+        } catch (error) {
+          console.error("Error fetching user address:", error);
+        }
+      }
+    };
+
+    // Function to get user's token balance
+    const getTokenBalance = async () => {
+      if (userAddress) {
+        const web3 = new Web3(window.ethereum);
+
+        // Create contract instance
+        const contract = new web3.eth.Contract(contractABI, contractAddress);
+
+        try {
+          const balance = await contract.methods.balanceOf(userAddress).call();
+          console.log(
+            "Token balance:",
+            (balance / 1000000000000000000n).toString()
+          );
+          setTokenBalance((balance / 1000000000000000000n).toString());
+        } catch (error) {
+          console.error("Error fetching token balance:", error);
+        }
+      }
+    };
+
+    getUserAddress();
+    getTokenBalance();
+  }, [userAddress]);
+
   return (
     <div>
       {/* <Nav /> */}
@@ -66,7 +239,7 @@ const Wallet = ({ depositAmount }) => {
           <div className="flex justify-between">
             <div class="mb-6">
               <h3 class="text-lg font-semibold mb-2">Balance</h3>
-              <p class="text-gray-600">INR {user.balance}</p>
+              {tokenBalance && <p>{tokenBalance.toString()} ITST</p>}
             </div>
             <Link to="/withdrawal">
               <button class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300">
@@ -74,6 +247,7 @@ const Wallet = ({ depositAmount }) => {
               </button>
             </Link>
           </div>
+          {userAddress && <p>Wallet Address: {userAddress}</p>}
           <div class="mb-6">
             <h3 class="text-lg font-semibold mb-2">Recent Transactions</h3>
             <ul class="divide-y divide-gray-300">
@@ -91,12 +265,22 @@ const Wallet = ({ depositAmount }) => {
               </li>
             </ul>
           </div>
-          <form onSubmit={handleSubmit}>
+          <button
+            onClick={isTokenAdded}
+            className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300"
+          >
+            List ITST into Metamask
+          </button>
+          <br />
+          <br />
+          <form onSubmit={transferCustomToken}>
             <input
               type="number"
               name="amount"
               placeholder="Amount"
-              onChange={(e) => setAmount(e.target.value)}
+              onChange={(e) =>
+                setAmount(Number(e.target.value) * 1000000000000000000)
+              }
               className="input input-bordered w-full max-w-xs"
             />
             <br />
@@ -108,6 +292,7 @@ const Wallet = ({ depositAmount }) => {
               Add Funds
             </button>
           </form>
+          {error && <p style={{ color: "red" }}>{error}</p>}
         </div>
       </div>
     </div>

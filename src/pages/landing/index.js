@@ -306,7 +306,7 @@ export default function Landing({ setVisible, posts, loading, getAllPosts }) {
                     dateTime={auction.dateTime}
                     game={auction.game}
                     user={auction.user}
-                    bids={auction.bid}
+                    eventMembers={auction.eventMembers}
                   />
                 ))
               ) : (

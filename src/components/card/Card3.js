@@ -1,8 +1,7 @@
 import { Link } from "react-router-dom";
 import CountdownTimerComp from "../countdown/CountdownTimer";
 
-const Card3 = ({_id, basePrice, dateTime, game, user, bids}) => {
-
+const Card3 = ({ _id, basePrice, dateTime, game, user, eventMembers }) => {
   return (
     <Link
       to={`/auction/${_id}`}
@@ -34,7 +33,7 @@ const Card3 = ({_id, basePrice, dateTime, game, user, bids}) => {
                 {game.name}
               </p>
               <div className="flex items-center space-x-2 text-sm text-gray-500 capitalize">
-                <div> {bids ? bids.length : 0} intersted</div>
+                <div> {eventMembers ? eventMembers.length : 0} intersted</div>
                 <div>·</div>
                 <div> 2 going </div>
               </div>

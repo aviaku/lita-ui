@@ -1,8 +1,15 @@
 import { Link } from "react-router-dom";
 import CountdownTimerComp from "../countdown/CountdownTimer";
 
-const Card6 = ({_id, basePrice, dateTime, game, user, bids, component}) => {
-
+const Card6 = ({
+  _id,
+  basePrice,
+  dateTime,
+  game,
+  user,
+  eventMembers,
+  component,
+}) => {
   return (
     <Link to={`/auction/${_id}`} className="w-full lg:pl-2 lg:pr-2 p-4">
       <div className="card bg-base-100 rounded-lg transform">
@@ -33,7 +40,10 @@ const Card6 = ({_id, basePrice, dateTime, game, user, bids, component}) => {
                   {game?.name}
                 </p>
                 <div className="flex items-center space-x-2 text-sm text-gray-500 capitalize">
-                  <div> {bids ? bids?.length : 0} intersted</div>
+                  <div>
+                    {" "}
+                    {eventMembers ? eventMembers?.length : 0} intersted
+                  </div>
                   <div>·</div>
                   {/* <div> 2 going </div> */}
                 </div>
@@ -42,13 +52,13 @@ const Card6 = ({_id, basePrice, dateTime, game, user, bids, component}) => {
           </div>
         </div>
         {!component ? (
-        <button
-          href=""
-          className="w-full linear rounded-[10px] hover:translate-y-1 hover:shadow-md bg-gradient-to-b from-yellow-200 to-yellow-300 hover:to-red-300 active:from-yellow-400 focus:from-red-400 px-4 py-2 text-base font-medium transition duration-200"
-        >
-          Bid Now
-        </button>
-        ) : null }
+          <button
+            href=""
+            className="w-full linear rounded-[10px] hover:translate-y-1 hover:shadow-md bg-gradient-to-b from-yellow-200 to-yellow-300 hover:to-red-300 active:from-yellow-400 focus:from-red-400 px-4 py-2 text-base font-medium transition duration-200"
+          >
+            Bid Now
+          </button>
+        ) : null}
       </div>
     </Link>
   );

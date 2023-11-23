@@ -1,8 +1,16 @@
 import { Link } from "react-router-dom";
 import CountdownTimerComp from "../countdown/CountdownTimer";
 
-const Card7 = ({_id, basePrice, status, dateTime, game, user, bids, handleDelete}) => {
-
+const Card7 = ({
+  _id,
+  basePrice,
+  status,
+  dateTime,
+  game,
+  user,
+  eventMembers,
+  handleDelete,
+}) => {
   return (
     <Link to={`/auction/${_id}`} className="w-full lg:pl-2 lg:pr-2 p-4">
       <div className="card bg-base-100 rounded-lg transform">
@@ -33,7 +41,7 @@ const Card7 = ({_id, basePrice, status, dateTime, game, user, bids, handleDelete
                   {game.name}
                 </p>
                 <div className="flex items-center space-x-2 text-sm text-gray-500 capitalize">
-                  <div> {bids ? bids.length : 0} intersted</div>
+                  <div> {eventMembers ? eventMembers.length : 0} intersted</div>
                   <div>·</div>
                   {/* <div> 2 going </div> */}
                 </div>
@@ -42,23 +50,23 @@ const Card7 = ({_id, basePrice, status, dateTime, game, user, bids, handleDelete
           </div>
         </div>
         {new Date(dateTime).getTime() > new Date().getTime() ? (
-        <button
-          onClick={(e) => {
-            e.preventDefault();
-            handleDelete(_id)
-          }}
-          className="w-full linear rounded-[10px] hover:translate-y-1 hover:shadow-md bg-gradient-to-b from-yellow-200 to-yellow-300 hover:to-red-300 active:from-yellow-400 focus:from-red-400 px-4 py-2 text-base font-medium transition duration-200"
-        >
-          Cancel Event
-        </button>) : (
           <button
-          disabled
-          className="w-full linear rounded-[10px] hover:translate-y-1 hover:shadow-md bg-gradient-to-b from-yellow-200 to-yellow-300 hover:to-red-300 active:from-yellow-400 focus:from-red-400 px-4 py-2 text-base font-medium transition duration-200"
-        >
-          {status}
-        </button>
-        )
-        }
+            onClick={(e) => {
+              e.preventDefault();
+              handleDelete(_id);
+            }}
+            className="w-full linear rounded-[10px] hover:translate-y-1 hover:shadow-md bg-gradient-to-b from-yellow-200 to-yellow-300 hover:to-red-300 active:from-yellow-400 focus:from-red-400 px-4 py-2 text-base font-medium transition duration-200"
+          >
+            Cancel Event
+          </button>
+        ) : (
+          <button
+            disabled
+            className="w-full linear rounded-[10px] hover:translate-y-1 hover:shadow-md bg-gradient-to-b from-yellow-200 to-yellow-300 hover:to-red-300 active:from-yellow-400 focus:from-red-400 px-4 py-2 text-base font-medium transition duration-200"
+          >
+            {status}
+          </button>
+        )}
       </div>
     </Link>
   );

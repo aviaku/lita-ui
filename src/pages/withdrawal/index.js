@@ -9,60 +9,37 @@ const Withdrawal = () => {
   const [withdrawalAmount, setWithdrawalAmount] = useState("");
   const [validationMessage, setValidationMessage] = useState("");
   const [notes, setNotes] = useState("");
+  const [walletAddress, setWalletAddress] = useState("");
 
   useEffect(() => {
     setBalance(user.balance);
   }, [user]);
 
-  const handleWithdrawal = async () => {
-    const amount = parseFloat(withdrawalAmount);
+  useEffect(() => {
+    // Function to get user's Ethereum address
+    const getUserAddress = async () => {
+      if (window.ethereum) {
+        // Request account access if needed
+        window.ethereum
+          .request({ method: "eth_requestAccounts" })
+          .then((accounts) => {
+            const address = accounts[0];
+            setWalletAddress(address);
 
-    if (amount <= 0 || isNaN(amount)) {
-      setValidationMessage("Please enter a valid withdrawal amount.");
-    } else if (amount > balance) {
-      setValidationMessage("Insufficient funds!");
-    } else {
-      const items = {
-        items: [
-          {
-            recipient_type: "EMAIL",
-            amount: {
-              value: withdrawalAmount, // Replace with the actual amount
-              currency: "INR", // Replace with the actual currency code
-            },
-            receiver: user.email, // Replace with the recipient's email
-            note: "Thank you.",
-          },
-        ],
-      };
-
-      // Withdrawal logic
-      try {
-        const response = await axios.post(
-          `${process.env.REACT_APP_BACKEND_URL}/paypal/send-payout`,
-          {
-            items,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-            },
-          }
-        );
-        console.log(response);
-        if (response.status !== 200) {
-          setValidationMessage("Something went wrong.");
-          return;
-        }
-        setBalance(balance - amount);
-        setWithdrawalAmount("");
-        setValidationMessage("Withdrawal request submitted successfully.");
-      } catch (error) {
-        console.log(error);
-        setValidationMessage("Something went wrong.");
+            // Subscribe to address changes
+            window.ethereum.on("accountsChanged", (newAccounts) => {
+              const newAddress = newAccounts[0];
+              setWalletAddress(newAddress);
+            });
+          })
+          .catch((error) => {
+            console.error(error);
+          });
       }
-    }
-  };
+    };
+
+    getUserAddress();
+  }, []);
 
   // const handleWithdrawal = async () => {
   //   const amount = parseFloat(withdrawalAmount);
@@ -72,15 +49,26 @@ const Withdrawal = () => {
   //   } else if (amount > balance) {
   //     setValidationMessage("Insufficient funds!");
   //   } else {
+  //     const items = {
+  //       items: [
+  //         {
+  //           recipient_type: "EMAIL",
+  //           amount: {
+  //             value: withdrawalAmount, // Replace with the actual amount
+  //             currency: "INR", // Replace with the actual currency code
+  //           },
+  //           receiver: user.email, // Replace with the recipient's email
+  //           note: "Thank you.",
+  //         },
+  //       ],
+  //     };
+
   //     // Withdrawal logic
   //     try {
   //       const response = await axios.post(
-  //         `${process.env.REACT_APP_BACKEND_URL}/request-withdrawal`,
+  //         `${process.env.REACT_APP_BACKEND_URL}/paypal/send-payout`,
   //         {
-  //           userId: user.id,
-  //           withdrawalAmount: parseInt(amount),
-  //           bankDetails: user.bankDetails,
-  //           notes,
+  //           items,
   //         },
   //         {
   //           headers: {
@@ -103,6 +91,46 @@ const Withdrawal = () => {
   //   }
   // };
 
+  const handleWithdrawal = async () => {
+    const amount = parseFloat(withdrawalAmount);
+
+    if (amount <= 0 || isNaN(amount)) {
+      setValidationMessage("Please enter a valid withdrawal amount.");
+    } else if (amount > balance) {
+      setValidationMessage("Insufficient funds!");
+    } else {
+      // Withdrawal logic
+      try {
+        const response = await axios.post(
+          `${process.env.REACT_APP_BACKEND_URL}/request-withdrawal`,
+          {
+            userId: user.id,
+            withdrawalAmount: parseInt(amount),
+            bankDetails: user.bankDetails,
+            walletAddress,
+            notes,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+            },
+          }
+        );
+        console.log(response);
+        if (response.status !== 200) {
+          setValidationMessage("Something went wrong.");
+          return;
+        }
+        setBalance(balance - amount);
+        setWithdrawalAmount("");
+        setValidationMessage("Withdrawal request submitted successfully.");
+      } catch (error) {
+        console.log(error);
+        setValidationMessage("Something went wrong.");
+      }
+    }
+  };
+
   return (
     <>
       <Header />
@@ -120,6 +148,22 @@ const Withdrawal = () => {
             >
               Withdrawal History
             </button>
+          </div>
+          <div className="mb-4">
+            <label
+              htmlFor="walletAddress"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Your Wallet Address:
+            </label>
+            <input
+              type="text"
+              id="walletAddress"
+              className="w-full p-2 border border-gray-300 rounded-md"
+              placeholder="Wallet Address"
+              value={walletAddress}
+              onChange={(e) => setWalletAddress(e.target.value)}
+            />
           </div>
           <div className="mb-4">
             <label
