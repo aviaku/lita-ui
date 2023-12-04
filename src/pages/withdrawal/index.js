@@ -140,7 +140,9 @@ const Withdrawal = () => {
           <div className=" flex justify-between mb-4">
             <div className="mb-4">
               <p className="text-lg">Available Balance:</p>
-              <p className="text-2xl font-semibold">INR.{balance.toFixed(2)}</p>
+              <p className="text-2xl font-semibold">
+                {balance.toFixed(2)} ITST
+              </p>
             </div>
             <button
               className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-md"

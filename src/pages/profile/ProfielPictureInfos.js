@@ -74,7 +74,7 @@ export default function ProfielPictureInfos({
         <div className="profile_w_right">
           <div className="blue_btn">
             <img src="../../../icons/wallet.png" alt="" className="invert" />
-            <span>INR {user.balance}</span>
+            <span>{user.balance} ITST</span>
           </div>
           {/* <div className="gray_btn">
             <i className="edit_icon"></i>
