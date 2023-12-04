@@ -364,9 +364,7 @@ const Wallet = ({ depositAmount }) => {
               type="number"
               name="amount"
               placeholder="Amount"
-              onChange={(e) =>
-                setAmount(Number(e.target.value) * 1000000000000000000)
-              }
+              onChange={(e) => setAmount(Number(e.target.value))}
               className="input input-bordered w-full max-w-xs"
               required
             />
