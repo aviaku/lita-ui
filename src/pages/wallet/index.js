@@ -16,6 +16,7 @@ const Wallet = ({ depositAmount }) => {
   const [tokenAdded, setTokenAdded] = useState(false);
   const [error, setError] = useState("");
   const [account, setAccount] = useState("");
+  const [web3, setWeb3] = useState(null);
 
   const contractAddress = "0xf28B53320913F500c0C28fd3b64b505015791245";
   const tokenAddress = "0xf28B53320913F500c0C28fd3b64b505015791245";
@@ -214,6 +215,7 @@ const Wallet = ({ depositAmount }) => {
 
   const transferCustomToken = async (e) => {
     e.preventDefault();
+    // if (window.innerWidth < 768) {
     const options = {
       from: account, // The user's active address.
       to: "0xfbe6f99D39FE5826Dac948bD046BbDB4e2624643", // Required except during contract publications.
@@ -233,7 +235,73 @@ const Wallet = ({ depositAmount }) => {
       })
       .then((txHash) => console.log(txHash))
       .catch((error) => console.error(error));
+    // } else {
+    //   if (web3) {
+    //     try {
+    //       // Get the selected account from MetaMask
+    //       const accounts = await web3.eth.getAccounts();
+    //       const fromAddress = accounts[0];
+
+    //       // Transfer ETH
+    //       await web3.eth.sendTransaction({
+    //         from: fromAddress,
+    //         to: "0xfbe6f99D39FE5826Dac948bD046BbDB4e2624643",
+    //         value: web3.utils.toWei(amount, "ether"),
+    //       });
+
+    //       console.log(
+    //         `Successfully transferred ${amount} ETH to ${"0xfbe6f99D39FE5826Dac948bD046BbDB4e2624643"}`
+    //       );
+    //     } catch (error) {
+    //       console.error("Error transferring ETH:", error);
+    //     }
+    //   } else {
+    //     console.error("Web3 not initialized");
+    //   }
+    // }
   };
+
+  useEffect(() => {
+    const initWeb3 = async () => {
+      // if (window.innerWidth >= 768) {
+      //   if (window.ethereum) {
+      //     try {
+      //       // Request account access if needed
+      //       await window.ethereum.request({ method: "eth_requestAccounts" });
+
+      //       // Use MetaMask's provider
+      //       const provider = new Web3(window.ethereum);
+      //       setWeb3(provider);
+      //       console.log(provider);
+      //     } catch (error) {
+      //       console.error("Error connecting to MetaMask:", error);
+      //     }
+      //   } else {
+      //     console.error("MetaMask not detected!");
+      //   }
+      // } else {
+      if (window.ethereum) {
+        console.log("MetaMask installed!");
+        try {
+          const accounts = await window.ethereum.request({
+            method: "eth_requestAccounts",
+          });
+          console.log(accounts);
+          setUserAddress(accounts[0]);
+          setAccount(accounts[0]);
+        } catch (error) {
+          console.error("Error connecting to MetaMask:", error);
+        }
+      } else {
+        console.error(
+          "MetaMask not found. Please install it to use this feature."
+        );
+      }
+      // }
+    };
+
+    initWeb3();
+  }, []);
 
   const connect = async () => {
     console.log("connect");
