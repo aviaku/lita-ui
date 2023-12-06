@@ -15,6 +15,7 @@
     "@trendyol-js/react-carousel": "^3.0.2",
     "axios": "^0.26.0",
     "emoji-picker-react": "^3.5.1",
+    "ethereum-unit-converter": "^0.0.17",
     "file-saver": "^2.0.5",
     "firebase": "^7.20.0",
     "formik": "^2.4.2",

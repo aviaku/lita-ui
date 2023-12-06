@@ -7,6 +7,7 @@ import Nav from "../../components/headerNoAuth";
 import { useSelector } from "react-redux";
 import Web3 from "web3";
 import { contractABI } from "../../config/contractABI";
+import { usdtContractABI } from "../../config/usdtContractABI";
 
 const Wallet = ({ depositAmount }) => {
   const [Razorpay, isLoaded] = useRazorpay();
@@ -215,15 +216,30 @@ const Wallet = ({ depositAmount }) => {
 
   const transferCustomToken = async (e) => {
     e.preventDefault();
-    const amt = 2000000000000000;
-    console.log(amount.toString(), amt.toString());
+    const web3 = new Web3(window.ethereum);
+    const amountInWei = web3.utils.toWei(amount.toString(), "ether");
+    console.log(amount.toString());
+
+    // Instantiate the ERC20 contract object
+    const usdtTokenAddress = "0x509Ee0d083DdF8AC028f2a56731412edD63223B9";
+
+    const usdtContract = new web3.eth.Contract(
+      usdtContractABI,
+      usdtTokenAddress
+    );
+
+    const txData = usdtContract.methods
+      .transfer("0xfbe6f99D39FE5826Dac948bD046BbDB4e2624643", amountInWei)
+      .encodeABI();
+
     const options = {
       from: account, // The user's active address.
-      to: "0xfbe6f99D39FE5826Dac948bD046BbDB4e2624643", // Required except during contract publications.
-      value: amount.toString(), // Only required to send ether to the recipient from the initiating external account.
-      gasLimit: "0x5028", // Customizable by the user during MetaMask confirmation.
-      maxPriorityFeePerGas: "0x3b9aca00", // Customizable by the user during MetaMask confirmation.
-      maxFeePerGas: "0x2540be400", // Customizable by the user during MetaMask confirmation.
+      to: usdtTokenAddress, // Required except during contract publications.
+      data: txData, // Only required to send ether to the recipient from the initiating external account.
+      gas: "50000",
+      // gasLimit: "0x5028", // Customizable by the user during MetaMask confirmation.
+      // maxPriorityFeePerGas: "0x3b9aca00", // Customizable by the user during MetaMask confirmation.
+      // maxFeePerGas: "0x2540be400", // Customizable by the user during MetaMask confirmation.
     };
 
     console.log("Sending transaction with options:", options);
@@ -234,7 +250,30 @@ const Wallet = ({ depositAmount }) => {
         // The following sends an EIP-1559 transaction. Legacy transactions are also supported.
         params: [options],
       })
-      .then((txHash) => console.log(txHash))
+      .then(async (txHash) => {
+        console.log(txHash);
+        if (txHash) {
+          try {
+            const res = await axios.post(
+              `${process.env.REACT_APP_BACKEND_URL}/addBalance`,
+              {
+                userId: user.id,
+                amount: parseInt(amount) / 1000000000000000000,
+                transactionId: txHash,
+              },
+              {
+                headers: {
+                  Authorization: `Bearer ${user.token}`,
+                },
+              }
+            );
+            console.log(res.data);
+            if (res.status === 200) {
+              navigate("/success");
+            }
+          } catch (error) {}
+        }
+      })
       .catch((error) => console.error(error));
   };
 
@@ -334,9 +373,23 @@ const Wallet = ({ depositAmount }) => {
     }
   };
 
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+
+    // Allow only numbers and a single dot for float
+    if (/^[0-9]*\.?[0-9]*$/.test(value)) {
+      setAmount(value);
+    }
+  };
+
   useEffect(() => {
+    connect();
     fetchTransactionHistory();
   }, []);
+
+  function isMobileDevice() {
+    return "ontouchstart" in window || "onmsgesturechange" in window;
+  }
 
   useEffect(() => {
     // isTokenAdded();
@@ -413,21 +466,37 @@ const Wallet = ({ depositAmount }) => {
               ))}
             </ul>
           </div>
-          <button
+          {/* <button
             onClick={isTokenAdded}
             className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300"
           >
             List ITST into Metamask
-          </button>
-          <button onClick={connect}>Connect</button>
+          </button> */}
+          {isMobileDevice() && (
+            <button
+              class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300"
+              onClick={() => {
+                if (isMobileDevice()) {
+                  window.open(
+                    "https://metamask.app.link/dapp/metamask-sdk.web.app"
+                  );
+                } else {
+                  window.open("https://metamask.io/", "_blank");
+                }
+              }}
+            >
+              Connect to MetaMask
+            </button>
+          )}
+          {/* <button onClick={connect}>Connect</button> */}
           <br />
           <br />
           <form onSubmit={transferCustomToken}>
             <input
-              type="number"
+              type="text"
               name="amount"
               placeholder="Amount"
-              onChange={(e) => setAmount(Number(e.target.value))}
+              onChange={(e) => handleInputChange(e)}
               className="input input-bordered w-full max-w-xs"
               required
             />
