@@ -242,7 +242,7 @@ const Wallet = ({ depositAmount }) => {
       // maxFeePerGas: "0x2540be400", // Customizable by the user during MetaMask confirmation.
     };
 
-    console.log("Sending transaction with options:", options);
+    console.log("Sending transaction with options:-", options);
 
     window.ethereum
       .request({
