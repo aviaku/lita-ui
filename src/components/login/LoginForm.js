@@ -32,7 +32,7 @@ export default function LoginForm({ setVisible }) {
   const [loading, setLoading] = useState(false);
   const loginSubmit = async () => {
     try {
-      setLoading(true);
+      // setLoading(true);
       // const { data } = await axios.post(
       //   `${process.env.REACT_APP_BACKEND_URL}/login`,
       //   {
@@ -44,8 +44,8 @@ export default function LoginForm({ setVisible }) {
       // Cookies.set("user", JSON.stringify(data));
       // navigate("/");
     } catch (error) {
-      setLoading(false);
-      setError(error?.response?.data?.message);
+      // setLoading(false);
+      // setError(error?.response?.data?.message);
     }
   };
   return (
