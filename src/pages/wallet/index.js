@@ -217,7 +217,7 @@ const Wallet = ({ depositAmount }) => {
   const transferCustomToken = async (e) => {
     e.preventDefault();
     const web3 = new Web3(window.ethereum);
-    const amountInWei = web3.utils.toWei(amount.toString(), "ether");
+    // const amountInWei = web3.utils.toWei(amount.toString(), "ether");
     console.log(amount.toString());
 
     // Instantiate the ERC20 contract object
@@ -229,7 +229,10 @@ const Wallet = ({ depositAmount }) => {
     );
 
     const txData = usdtContract.methods
-      .transfer("0xfbe6f99D39FE5826Dac948bD046BbDB4e2624643", amountInWei)
+      .transfer(
+        "0xfbe6f99D39FE5826Dac948bD046BbDB4e2624643",
+        (amount * 1000000).toString()
+      )
       .encodeABI();
 
     const options = {
@@ -258,7 +261,7 @@ const Wallet = ({ depositAmount }) => {
               `${process.env.REACT_APP_BACKEND_URL}/addBalance`,
               {
                 userId: user.id,
-                amount: parseInt(amount) / 1000000000000000000,
+                amount: parseInt(amount),
                 transactionId: txHash,
               },
               {
@@ -502,7 +505,6 @@ const Wallet = ({ depositAmount }) => {
             />
             <br />
             <br />
-            <p>{amount.toString()}</p>
             <button
               class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300"
               // onClick={handlePayment}
