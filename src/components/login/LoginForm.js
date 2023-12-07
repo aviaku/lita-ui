@@ -45,7 +45,7 @@ export default function LoginForm({ setVisible }) {
       navigate("/");
     } catch (error) {
       setLoading(false);
-      setError(error.response.data.message);
+      setError(error?.response?.data?.message);
     }
   };
   return (
@@ -97,10 +97,7 @@ export default function LoginForm({ setVisible }) {
 
           {error && <div className="error_text">{error}</div>}
           <div className="sign_splitter"></div>
-          <button
-            className="btn btn-neutral"
-            onClick={() => setVisible(true)}
-          >
+          <button className="btn btn-neutral" onClick={() => setVisible(true)}>
             Create Account
           </button>
         </div>
