@@ -478,7 +478,7 @@ const Wallet = ({ depositAmount }) => {
               onClick={() => {
                 if (isMobileDevice()) {
                   window.open(
-                    "https://metamask.app.link/dapp/metamask-sdk.web.app"
+                    "https://metamask.app.link/dapp/main.d2xgdhuoo81hrb.amplifyapp.com/"
                   );
                 } else {
                   window.open("https://metamask.io/", "_blank");
