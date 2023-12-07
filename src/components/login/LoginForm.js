@@ -33,13 +33,13 @@ export default function LoginForm({ setVisible }) {
   const loginSubmit = async () => {
     try {
       setLoading(true);
-      const { data } = await axios.post(
-        `${process.env.REACT_APP_BACKEND_URL}/login`,
-        {
-          email,
-          password,
-        }
-      );
+      // const { data } = await axios.post(
+      //   `${process.env.REACT_APP_BACKEND_URL}/login`,
+      //   {
+      //     email,
+      //     password,
+      //   }
+      // );
       // dispatch({ type: "LOGIN", payload: data });
       // Cookies.set("user", JSON.stringify(data));
       // navigate("/");
