@@ -217,11 +217,11 @@ const Wallet = ({ depositAmount }) => {
   const transferCustomToken = async (e) => {
     e.preventDefault();
     const web3 = new Web3(window.ethereum);
-    // const amountInWei = web3.utils.toWei(amount.toString(), "ether");
+    const amountInWei = web3.utils.toWei(amount.toString(), "ether");
     console.log(amount.toString());
 
     // Instantiate the ERC20 contract object
-    const usdtTokenAddress = "0x509Ee0d083DdF8AC028f2a56731412edD63223B9";
+    const usdtTokenAddress = "0xdAC17F958D2ee523a2206206994597C13D831ec7";
 
     const usdtContract = new web3.eth.Contract(
       usdtContractABI,
@@ -229,10 +229,7 @@ const Wallet = ({ depositAmount }) => {
     );
 
     const txData = usdtContract.methods
-      .transfer(
-        "0xfbe6f99D39FE5826Dac948bD046BbDB4e2624643",
-        (amount * 1000000).toString()
-      )
+      .transfer("0xfbe6f99D39FE5826Dac948bD046BbDB4e2624643", amountInWei)
       .encodeABI();
 
     const options = {
