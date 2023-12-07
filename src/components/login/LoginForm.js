@@ -31,22 +31,23 @@ export default function LoginForm({ setVisible }) {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const loginSubmit = async () => {
-    try {
-      setLoading(true);
-      const { data } = await axios.post(
-        `${process.env.REACT_APP_BACKEND_URL}/login`,
-        {
-          email,
-          password,
-        }
-      );
-      dispatch({ type: "LOGIN", payload: data });
-      Cookies.set("user", JSON.stringify(data));
-      navigate("/");
-    } catch (error) {
-      setLoading(false);
-      setError(error?.response?.data?.message);
-    }
+    console.log("loginSubmit");
+    // try {
+    //   setLoading(true);
+    //   const { data } = await axios.post(
+    //     `${process.env.REACT_APP_BACKEND_URL}/login`,
+    //     {
+    //       email,
+    //       password,
+    //     }
+    //   );
+    //   dispatch({ type: "LOGIN", payload: data });
+    //   Cookies.set("user", JSON.stringify(data));
+    //   navigate("/");
+    // } catch (error) {
+    //   setLoading(false);
+    //   setError(error?.response?.data?.message);
+    // }
   };
   return (
     <div className="login_wrap">
