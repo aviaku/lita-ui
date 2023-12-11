@@ -446,7 +446,7 @@ const Wallet = ({ depositAmount }) => {
             <div class="mb-6">
               <h3 class="text-lg font-semibold mb-2">Balance</h3>
               {console.log("user", user)}
-              {user?.balance && <p>{user?.balance} ITST</p>}
+              {user?.balance && <p>{user?.balance} USDT</p>}
             </div>
             <Link to="/withdrawal">
               <button class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300">

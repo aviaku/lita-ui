@@ -281,7 +281,7 @@ const Wallet = ({ depositAmount }) => {
           <div className="flex justify-between">
             <div class="mb-6">
               <h3 class="text-lg font-semibold mb-2">Balance</h3>
-              {tokenBalance && <p>{user.balance} ITST</p>}
+              {tokenBalance && <p>{user.balance} USDT</p>}
             </div>
             <Link to="/withdrawal">
               <button class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300">

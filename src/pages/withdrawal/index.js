@@ -141,7 +141,7 @@ const Withdrawal = () => {
             <div className="mb-4">
               <p className="text-lg">Available Balance:</p>
               <p className="text-2xl font-semibold">
-                {balance.toFixed(2)} ITST
+                {balance.toFixed(2)} USDT
               </p>
             </div>
             <button
