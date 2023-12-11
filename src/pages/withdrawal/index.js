@@ -192,9 +192,9 @@ const Withdrawal = () => {
             ></textarea>
           </div>
 
-          <p className="text-sm text-gray-500">
+          {/* <p className="text-sm text-gray-500">
             * Withdrawal fee: 0.5% of the withdrawal amount
-          </p>
+          </p> */}
           <button
             className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-md"
             onClick={handleWithdrawal}

@@ -445,7 +445,8 @@ const Wallet = ({ depositAmount }) => {
           <div className="flex justify-between">
             <div class="mb-6">
               <h3 class="text-lg font-semibold mb-2">Balance</h3>
-              {tokenBalance && <p>{user.balance} ITST</p>}
+              {console.log("user", user)}
+              {user?.balance && <p>{user?.balance} ITST</p>}
             </div>
             <Link to="/withdrawal">
               <button class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300">
@@ -476,24 +477,26 @@ const Wallet = ({ depositAmount }) => {
             List ITST into Metamask
           </button> */}
           {isMobileDevice() && (
-            <button
-              class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300"
-              onClick={() => {
-                if (isMobileDevice()) {
-                  window.open(
-                    "https://metamask.app.link/dapp/main.d2xgdhuoo81hrb.amplifyapp.com/"
-                  );
-                } else {
-                  window.open("https://metamask.io/", "_blank");
-                }
-              }}
-            >
-              Connect to MetaMask
-            </button>
+            <>
+              <button
+                class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300"
+                onClick={() => {
+                  if (isMobileDevice()) {
+                    window.open(
+                      "https://metamask.app.link/dapp/main.d2xgdhuoo81hrb.amplifyapp.com/"
+                    );
+                  } else {
+                    window.open("https://metamask.io/", "_blank");
+                  }
+                }}
+              >
+                Connect to MetaMask
+              </button>
+              <br />
+              <br />
+            </>
           )}
           {/* <button onClick={connect}>Connect</button> */}
-          <br />
-          <br />
           <form onSubmit={transferCustomToken}>
             <input
               type="text"
