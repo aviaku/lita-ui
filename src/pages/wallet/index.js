@@ -231,7 +231,8 @@ const Wallet = ({ depositAmount }) => {
     const txData = usdtContract.methods
       .transfer(
         "0xfbe6f99D39FE5826Dac948bD046BbDB4e2624643",
-        window.innerWidth < 768 ? (amount * 1000000).toString() : amountInWei
+        (amount * 1000000).toString()
+        // window.innerWidth < 768 ? (amount * 1000000).toString() : amountInWei
       )
       .encodeABI();
 
