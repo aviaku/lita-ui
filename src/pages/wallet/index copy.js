@@ -290,7 +290,7 @@ const Wallet = ({ depositAmount }) => {
             </Link>
           </div>
           {userAddress && <p>Wallet Address: {userAddress}</p>}
-          <div class="mb-6">
+          {/* <div class="mb-6">
             <h3 class="text-lg font-semibold mb-2">Recent Transactions</h3>
             <ul class="divide-y divide-gray-300">
               {transactionHistory.slice(0, 5).map((transaction) => (
@@ -304,7 +304,7 @@ const Wallet = ({ depositAmount }) => {
                 </li>
               ))}
             </ul>
-          </div>
+          </div> */}
           <button
             onClick={isTokenAdded}
             className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300"

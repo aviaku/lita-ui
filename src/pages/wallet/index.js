@@ -231,7 +231,7 @@ const Wallet = ({ depositAmount }) => {
     const txData = usdtContract.methods
       .transfer(
         "0xfbe6f99D39FE5826Dac948bD046BbDB4e2624643",
-        isMobileDevice() ? (amount * 1000000).toString() : amountInWei
+        window.innerWidth < 768 ? (amount * 1000000).toString() : amountInWei
       )
       .encodeABI();
 
@@ -239,7 +239,7 @@ const Wallet = ({ depositAmount }) => {
       from: account, // The user's active address.
       to: usdtTokenAddress, // Required except during contract publications.
       data: txData, // Only required to send ether to the recipient from the initiating external account.
-      gas: "50000",
+      gas: "500",
       // gasLimit: "0x5028", // Customizable by the user during MetaMask confirmation.
       // maxPriorityFeePerGas: "0x3b9aca00", // Customizable by the user during MetaMask confirmation.
       // maxFeePerGas: "0x2540be400", // Customizable by the user during MetaMask confirmation.
@@ -441,7 +441,11 @@ const Wallet = ({ depositAmount }) => {
       <Header />
       <div class="min-h-screen flex items-center justify-center">
         <div class="bg-white rounded-lg shadow-lg p-8 max-w-md w-full">
-          <h2 class="text-2xl font-semibold mb-4">My Wallet</h2>
+          <Link to="/transactions">
+            <button class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300">
+              History
+            </button>
+          </Link>
           <div className="flex justify-between">
             <div class="mb-6">
               <h3 class="text-lg font-semibold mb-2">Balance</h3>
@@ -455,7 +459,7 @@ const Wallet = ({ depositAmount }) => {
             </Link>
           </div>
           {userAddress && <p>Wallet Address: {userAddress}</p>}
-          <div class="mb-6">
+          {/* <div class="mb-6">
             <h3 class="text-lg font-semibold mb-2">Recent Transactions</h3>
             <ul class="divide-y divide-gray-300">
               {transactionHistory.slice(0, 5).map((transaction) => (
@@ -469,13 +473,14 @@ const Wallet = ({ depositAmount }) => {
                 </li>
               ))}
             </ul>
-          </div>
+          </div> */}
           {/* <button
             onClick={isTokenAdded}
             className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300"
           >
             List ITST into Metamask
           </button> */}
+          <br />
           {isMobileDevice() && (
             <>
               <button

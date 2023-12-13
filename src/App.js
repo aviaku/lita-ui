@@ -33,6 +33,7 @@ import Success from "./pages/payment/Success";
 import MoneyWithdrawal from "./pages/withdrawal";
 import Kyc from "./pages/kyc";
 import WithdrawalHistory from "./pages/withdrawal/WithdrawalHistory";
+import TransactionHistory from "./pages/wallet/TransactionHistory";
 function App() {
   const [visible, setVisible] = useState(false);
   const { user, darkTheme } = useSelector((state) => ({ ...state }));
@@ -131,6 +132,7 @@ function App() {
 
         <Route path="/wallet" element={<Wallet />} exact />
         <Route path="/withdrawal" element={<MoneyWithdrawal />} exact />
+        <Route path="/transactions" element={<TransactionHistory />} exact />
         <Route
           path="/withdrawalHistory/"
           element={<WithdrawalHistory />}
