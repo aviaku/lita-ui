@@ -6,10 +6,16 @@ import Header from "../../components/header";
 import Nav from "../../components/headerNoAuth";
 import { useSelector } from "react-redux";
 import Web3 from "web3";
+import { useSDK } from "@metamask/sdk-react";
 import { contractABI } from "../../config/contractABI";
 import { usdtContractABI } from "../../config/usdtContractABI";
 
 const Wallet = ({ depositAmount }) => {
+  const { sdk, connected, connecting, provider, chainId } = useSDK();
+  console.log("chainId", chainId);
+
+  const web31 = new Web3("https://rpc-mainnet.maticvigil.com"); // Use the appropriate Polygon RPC endpoint
+
   const [Razorpay, isLoaded] = useRazorpay();
 
   const [userAddress, setUserAddress] = useState("");
@@ -18,6 +24,7 @@ const Wallet = ({ depositAmount }) => {
   const [error, setError] = useState("");
   const [account, setAccount] = useState("");
   const [web3, setWeb3] = useState(null);
+  // const [chainId, setChainId] = useState(null);
 
   const contractAddress = "0xf28B53320913F500c0C28fd3b64b505015791245";
   const tokenAddress = "0xf28B53320913F500c0C28fd3b64b505015791245";
@@ -214,20 +221,97 @@ const Wallet = ({ depositAmount }) => {
   //   }
   // };
 
+  window.ethereum
+    .request({ method: "eth_accounts" })
+    .then(handleAccountsChanged)
+    .catch((err) => {
+      // Some unexpected error.
+      // For backwards compatibility reasons, if no accounts are available,
+      // eth_accounts returns an empty array.
+      console.error(err);
+    });
+
+  // Note that this event is emitted on page load.
+  // If the array of accounts is non-empty, you're already
+  // connected.
+  window.ethereum.on("accountsChanged", handleAccountsChanged);
+
+  // eth_accounts always returns an array.
+  function handleAccountsChanged(accounts) {
+    if (accounts.length === 0) {
+      // MetaMask is locked or the user has not connected any accounts.
+      console.log("Please connect to MetaMask.");
+    } else if (accounts[0] !== account) {
+      // Reload your interface with accounts[0].
+      setAccount(accounts[0]);
+    }
+  }
+
+  const handleNetworkSwitch = async () => {
+    try {
+      await window.ethereum.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: "0x89" }],
+      });
+    } catch (switchError) {
+      // This error code indicates that the chain has not been added to MetaMask.
+      if (switchError.code === 4902) {
+        try {
+          await window.ethereum.request({
+            method: "wallet_addEthereumChain",
+            params: [
+              {
+                chainId: "0x137",
+                chainName: "Polygon",
+                rpcUrls: ["https://polygon-rpc.com"] /* ... */,
+                nativeCurrency: {
+                  name: "MATIC",
+                  symbol: "MATIC",
+                  decimals: 18,
+                },
+                blockExplorerUrls: ["https://polygonscan.com/"],
+              },
+            ],
+          });
+        } catch (addError) {
+          // handle "add" error
+        }
+      }
+      // handle other "switch" errors
+    }
+  };
+
   const transferCustomToken = async (e) => {
     e.preventDefault();
     const web3 = new Web3(window.ethereum);
+    console.log("chainId", chainId);
+    if (chainId !== "0x89") {
+      await handleNetworkSwitch();
+    }
     const amountInWei = web3.utils.toWei(amount.toString(), "ether");
     console.log(amount.toString());
 
     // Instantiate the ERC20 contract object
-    const usdtTokenAddress = "0x7ffb3d637014488b63fb9858e279385685afc1e2";
+    const usdtTokenAddress = "0xc2132D05D31c914a87C6611C10748AEb04B58e8F";
 
     const usdtContract = new web3.eth.Contract(
       usdtContractABI,
       usdtTokenAddress
     );
 
+    const gasPrice = await web3.eth.getGasPrice();
+    console.log(`Current Gas Price: ${gasPrice} wei`);
+
+    const gasEstimate = await usdtContract.methods
+      .transfer("0xfbe6f99D39FE5826Dac948bD046BbDB4e2624643", amount)
+      .estimateGas({ from: account });
+    console.log(`Gas Estimate: ${gasEstimate}`);
+
+    const gasFeeWei = gasPrice * gasEstimate;
+    console.log(`Gas Fee: ${gasFeeWei} wei`);
+    const gasFeeTether = web3.utils.fromWei(gasFeeWei.toString(), "ether");
+    console.log(`Gas Fee in Tether: ${gasFeeTether} USDT`);
+    // return;
     const txData = usdtContract.methods
       .transfer(
         "0xfbe6f99D39FE5826Dac948bD046BbDB4e2624643",
@@ -240,7 +324,7 @@ const Wallet = ({ depositAmount }) => {
       from: account, // The user's active address.
       to: usdtTokenAddress, // Required except during contract publications.
       data: txData, // Only required to send ether to the recipient from the initiating external account.
-      gas: "500",
+      gas: gasEstimate.toString(), // Required.
       // gasLimit: "0x5028", // Customizable by the user during MetaMask confirmation.
       // maxPriorityFeePerGas: "0x3b9aca00", // Customizable by the user during MetaMask confirmation.
       // maxFeePerGas: "0x2540be400", // Customizable by the user during MetaMask confirmation.
