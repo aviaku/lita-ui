@@ -347,7 +347,8 @@ const Wallet = ({ depositAmount }) => {
               {
                 userId: user.id,
                 amount: parseInt(amount),
-                transactionId: txHash,
+                status: "pending",
+                transactionHash: txHash,
               },
               {
                 headers: {
@@ -360,6 +361,8 @@ const Wallet = ({ depositAmount }) => {
               navigate("/success");
             }
           } catch (error) {}
+        } else {
+          setError("Transaction failed");
         }
       })
       .catch((error) => console.error(error));
