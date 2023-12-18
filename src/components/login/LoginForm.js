@@ -44,9 +44,9 @@ export default function LoginForm({ setVisible }) {
       Cookies.set("user", JSON.stringify(data));
       navigate("/");
     } catch (error) {
-      console.log("Email or Password is wrong");
+      // console.log("Email or Password is wrong");
       setLoading(false);
-      setError("Email or Password is wrong");
+      setError("Wrong email or password. Try again or create an account.");
       // setError(error?.response?.data?.message);
     }
   };

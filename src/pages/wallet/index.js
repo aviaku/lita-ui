@@ -69,7 +69,7 @@ const Wallet = ({ depositAmount }) => {
   const { user } = useSelector((state) => ({ ...state }));
   const navigate = useNavigate();
 
-  const [amount, setAmount] = useState(0);
+  const [amount, setAmount] = useState(10);
   const [transactionHistory, setTransactionHistory] = useState([]);
 
   // const handleSubmit = (e) => {
@@ -283,6 +283,7 @@ const Wallet = ({ depositAmount }) => {
 
   const transferCustomToken = async (e) => {
     e.preventDefault();
+    setError("");
     const web3 = new Web3(window.ethereum);
     console.log("chainId", chainId);
     if (chainId !== "0x89") {
@@ -298,6 +299,17 @@ const Wallet = ({ depositAmount }) => {
       usdtContractABI,
       usdtTokenAddress
     );
+
+    const balance = await usdtContract.methods.balanceOf(account).call();
+    console.log("Balance:", Number(balance.toString()) / 1000000);
+
+    if (Number(balance.toString()) / 1000000 < amount) {
+      setError("Insufficient balance");
+      setTimeout(() => {
+        setError("");
+      }, 5000);
+      return;
+    }
 
     const gasPrice = await web3.eth.getGasPrice();
     console.log(`Current Gas Price: ${gasPrice} wei`);
@@ -468,9 +480,12 @@ const Wallet = ({ depositAmount }) => {
     const value = e.target.value;
 
     // Allow only numbers and a single dot for float
-    if (/^[0-9]*\.?[0-9]*$/.test(value)) {
-      setAmount(value);
-    }
+    // if (/^[0-9]*\.?[0-9]*$/.test(value)) {
+    //   setAmount(value);
+    // }
+
+    const result = value.replace(/\D/g, "");
+    setAmount(result);
   };
 
   useEffect(() => {
@@ -589,6 +604,7 @@ const Wallet = ({ depositAmount }) => {
             <input
               type="text"
               name="amount"
+              value={amount}
               placeholder="Amount"
               onChange={(e) => handleInputChange(e)}
               className="input input-bordered w-full max-w-xs"
