@@ -406,6 +406,11 @@ const Auction = () => {
         className="rounded-full p-5 bg-blue-700 fixed bottom-3 right-14 text-white cursor-pointer z-50"
       >
         <BsChatLeftTextFill size={18} className=" " />
+        {messages?.length > 0 && (
+          <div class="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full -top-2 -end-2 dark:border-gray-900">
+            {messages?.length}
+          </div>
+        )}
       </div>
       <dialog id="my_modal_3" className="modal">
         <div className="modal-box">

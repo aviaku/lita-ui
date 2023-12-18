@@ -183,11 +183,9 @@ export default function Landing({ setVisible, posts, loading, getAllPosts }) {
                   </div>
                 </form> */}
                 <p className="mt-8 text-gray-700 lg:w-10/12">
-                  Sit amet consectetur adipisicing elit.{" "}
-                  <a href="#" className="text-yellow-700">
-                    connection
-                  </a>{" "}
-                  tenetur nihil quaerat suscipit, sunt dignissimos.
+                  Level up your gaming experience! Dive into the world of your
+                  favorite games alongside pro gamers for an unforgettable
+                  gaming adventure. Join the elite league of champions now!
                 </p>
               </div>
               <div className="ml-auto lg:w-6/12">
