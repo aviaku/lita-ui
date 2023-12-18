@@ -24,7 +24,7 @@ const Footer = () => {
               </span>
             </a>
             <p className="mt-2 text-sm text-gray-500">Players Battleground!</p>
-            <div className="mt-4">
+            {/* <div className="mt-4">
               <span className="inline-flex justify-center mt-2 sm:ml-auto sm:mt-0 sm:justify-start">
                 <a className="text-gray-500 cursor-pointer hover:text-gray-700">
                   <svg
@@ -89,7 +89,7 @@ const Footer = () => {
                   </svg>
                 </a>
               </span>
-            </div>
+            </div> */}
           </div>
           <div className="flex flex-wrap flex-grow mt-10 -mb-10 text-center md:pl-20 md:mt-0 md:text-left">
             <div className="w-full px-4 lg:w-1/4 md:w-1/2">
@@ -117,11 +117,11 @@ const Footer = () => {
                     Twitter
                   </a>
                 </li>
-                <li className="mt-3">
+                {/* <li className="mt-3">
                   <a className="text-gray-500 cursor-pointer hover:text-gray-900">
                     Release Updates
                   </a>
-                </li>
+                </li> */}
               </nav>
             </div>
             <div className="w-full px-4 lg:w-1/4 md:w-1/2">
