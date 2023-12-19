@@ -116,7 +116,6 @@ const Withdrawal = () => {
             },
           }
         );
-        console.log(response);
         if (response.status !== 200) {
           setValidationMessage("Something went wrong.");
           return;

@@ -16,7 +16,6 @@ import Card5 from "../../components/card/card5";
 import LandingPageLoader from "./LandingPageLoader";
 export default function Landing({ setVisible, posts, loading, getAllPosts }) {
   const { user } = useSelector((state) => ({ ...state }));
-  console.log("User", user);
   const middle = useRef(null);
   const [height, setHeight] = useState();
   const [games, setGames] = useState([]);
@@ -91,7 +90,6 @@ export default function Landing({ setVisible, posts, loading, getAllPosts }) {
       const res = await axios.post(`${apiEndpoint}/getAllEvents`, {
         status: "ACTIVE",
       });
-      console.log("🚀 ~ file: index.js:17 ~ auctions ~ res:", res);
       setAuctions(res.data.docs);
       setIsAuctionsLoading(false);
     } catch (error) {
@@ -103,7 +101,6 @@ export default function Landing({ setVisible, posts, loading, getAllPosts }) {
     try {
       setIsGamersLoading(true);
       const res = await axios.get(`${apiEndpoint}/getUserGamers`);
-      console.log("🚀 ~ file: index.js:17 ~ Players ~ res:", res);
       setGamers(res.data);
       setIsGamersLoading(false);
     } catch (error) {
@@ -115,7 +112,6 @@ export default function Landing({ setVisible, posts, loading, getAllPosts }) {
     try {
       setIsGamesLoading(true);
       const res = await axios.get(`${apiEndpoint}/getAllGames`);
-      console.log("🚀 ~ file: index.js:17 ~ games ~ res:", res);
       setGames(res.data);
       setIsGamesLoading(false);
     } catch (error) {

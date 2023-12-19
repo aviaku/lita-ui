@@ -12,7 +12,6 @@ import { usdtContractABI } from "../../config/usdtContractABI";
 
 const Wallet = ({ depositAmount }) => {
   const { sdk, connected, connecting, provider, chainId } = useSDK();
-  console.log("chainId", chainId);
 
   const web31 = new Web3("https://rpc-mainnet.maticvigil.com"); // Use the appropriate Polygon RPC endpoint
 
@@ -40,9 +39,7 @@ const Wallet = ({ depositAmount }) => {
       // description: "Test Transaction",
       // image: "https://example.com/your_logo",
       // order_id: order.id, //order id from backend
-      handler: (res) => {
-        console.log(res);
-      },
+      handler: (res) => {},
       // prefill: {
       //   name: "Piyush Garg",
       //   email: "youremail@example.com",
@@ -89,11 +86,8 @@ const Wallet = ({ depositAmount }) => {
           },
         }
       );
-      console.log(res.data.transactions);
       setTransactionHistory(res.data.transactions);
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
 
   const isTokenAdded = async () => {
@@ -240,7 +234,6 @@ const Wallet = ({ depositAmount }) => {
   function handleAccountsChanged(accounts) {
     if (accounts.length === 0) {
       // MetaMask is locked or the user has not connected any accounts.
-      console.log("Please connect to MetaMask.");
     } else if (accounts[0] !== account) {
       // Reload your interface with accounts[0].
       setAccount(accounts[0]);
@@ -285,12 +278,10 @@ const Wallet = ({ depositAmount }) => {
     e.preventDefault();
     setError("");
     const web3 = new Web3(window.ethereum);
-    console.log("chainId", chainId);
     if (chainId !== "0x89") {
       await handleNetworkSwitch();
     }
     const amountInWei = web3.utils.toWei(amount.toString(), "ether");
-    console.log(amount.toString());
 
     // Instantiate the ERC20 contract object
     const usdtTokenAddress = "0xc2132D05D31c914a87C6611C10748AEb04B58e8F";
@@ -301,7 +292,6 @@ const Wallet = ({ depositAmount }) => {
     );
 
     const balance = await usdtContract.methods.balanceOf(account).call();
-    console.log("Balance:", Number(balance.toString()) / 1000000);
 
     if (Number(balance.toString()) / 1000000 < amount) {
       setError("Insufficient balance");
@@ -312,17 +302,13 @@ const Wallet = ({ depositAmount }) => {
     }
 
     const gasPrice = await web3.eth.getGasPrice();
-    console.log(`Current Gas Price: ${gasPrice} wei`);
 
     const gasEstimate = await usdtContract.methods
       .transfer("0xfbe6f99D39FE5826Dac948bD046BbDB4e2624643", amount)
       .estimateGas({ from: account });
-    console.log(`Gas Estimate: ${gasEstimate}`);
 
     const gasFeeWei = gasPrice * gasEstimate;
-    console.log(`Gas Fee: ${gasFeeWei} wei`);
     const gasFeeTether = web3.utils.fromWei(gasFeeWei.toString(), "ether");
-    console.log(`Gas Fee in Tether: ${gasFeeTether} USDT`);
     // return;
     const txData = usdtContract.methods
       .transfer(
@@ -342,8 +328,6 @@ const Wallet = ({ depositAmount }) => {
       // maxFeePerGas: "0x2540be400", // Customizable by the user during MetaMask confirmation.
     };
 
-    console.log("Sending transaction with options:-", options);
-
     window.ethereum
       .request({
         method: "eth_sendTransaction",
@@ -351,7 +335,6 @@ const Wallet = ({ depositAmount }) => {
         params: [options],
       })
       .then(async (txHash) => {
-        console.log(txHash);
         if (txHash) {
           try {
             const res = await axios.post(
@@ -368,7 +351,6 @@ const Wallet = ({ depositAmount }) => {
                 },
               }
             );
-            console.log(res.data);
             if (res.status === 200) {
               navigate("/success");
             }
@@ -523,10 +505,6 @@ const Wallet = ({ depositAmount }) => {
 
         try {
           const balance = await contract.methods.balanceOf(userAddress).call();
-          console.log(
-            "Token balance:",
-            (balance / 1000000000000000000n).toString()
-          );
           setTokenBalance((balance / 1000000000000000000n).toString());
         } catch (error) {
           console.error("Error fetching token balance:", error);
@@ -547,7 +525,6 @@ const Wallet = ({ depositAmount }) => {
           <div className="flex justify-between">
             <div class="mb-6">
               <h3 class="text-lg font-semibold mb-2">Balance</h3>
-              {console.log("user", user)}
               {user?.balance && <p>{user?.balance} USDT</p>}
             </div>
             <Link to="/withdrawal">

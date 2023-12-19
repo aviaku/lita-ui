@@ -43,7 +43,6 @@ function App() {
     error: "",
   });
   useEffect(() => {
-    console.log("POSTS", posts);
     getAllPosts();
   }, []);
   const getAllPosts = async () => {
@@ -72,7 +71,6 @@ function App() {
   };
   return (
     <div className={darkTheme && "dark"}>
-      {console.log("pppppppp", posts)}
       {visible && (
         <CreatePostPopup
           user={user}

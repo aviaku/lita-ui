@@ -33,7 +33,6 @@ const Auction = () => {
   const apiEndpoint = process.env.REACT_APP_BACKEND_URL;
 
   const { user } = useSelector((state) => ({ ...state }));
-  console.log("Userrrrrrrrrrr", user);
   const [donationAmount, setDonationAmount] = useState("");
   const [donationMessage, setDonationMessage] = useState("");
   const [bidAmount, setBidAmount] = useState("");
@@ -68,8 +67,6 @@ const Auction = () => {
 
   const bid = async (e) => {
     e.preventDefault();
-
-    console.log("Hellloooo");
 
     // const { uid, photoURL, displayName } = auth.currentUser;
 
@@ -127,7 +124,6 @@ const Auction = () => {
           const userAlreadyBidded = messages.find(
             (message) => message.uid === user.id
           );
-          console.log("mmmmmmmmmmm", lastMessage, userAlreadyBidded);
           if (userAlreadyBidded) {
             await messagesRef.doc(userAlreadyBidded.id).update({
               text: bidAmount,
@@ -155,9 +151,7 @@ const Auction = () => {
       } else {
         toastify(res.data.error);
       }
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
 
   const donate = async (e) => {
@@ -185,16 +179,9 @@ const Auction = () => {
         // call auctionList again
         auctionList();
       } else {
-        console.log("res", res);
         toastify(res.data.error);
       }
-
-      console.log(
-        "resssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
-        res
-      );
     } catch (error) {
-      console.log(error.response);
       toastify(error.response.data.error);
     }
   };
@@ -260,7 +247,6 @@ const Auction = () => {
       } else {
         isAlreadyBided = auc.eventMembers.find((b) => b.user._id === user?.id);
       }
-      console.log("isAlreadyBided", isAlreadyBided);
       if (isAlreadyBided) {
         setAlreadyBided(true);
       }
@@ -278,7 +264,6 @@ const Auction = () => {
     const resultRankingArr = resultRanking;
     resultRankingArr[position] = { userId, ranking: e.target.value };
     setResultRanking([...resultRankingArr]);
-    console.log(resultRanking);
   };
 
   const handleResultSubmit = async (e) => {
@@ -298,7 +283,6 @@ const Auction = () => {
         userId: user.id,
         screenshotUrl: picRes.data.secure_url,
       };
-      console.log(data);
       const res = await axios.post(
         `${apiEndpoint}/events/${id}/rankings`,
         data,
@@ -339,7 +323,6 @@ const Auction = () => {
         message: disputeMessage,
         type: disputeType,
       };
-      console.log(data);
       const res = await axios.post(
         `${apiEndpoint}/events/${id}/disputes`,
         data,
@@ -353,7 +336,6 @@ const Auction = () => {
         setDisputeSubmitBtnDisabled(false);
         setRaiseDispute(false);
         toastify("Dispute Submitted Successfully!");
-        console.log(res);
         // call auctionList again
         auctionList();
       }
