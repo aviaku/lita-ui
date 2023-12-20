@@ -18,7 +18,6 @@ export default function UserMenu({ user, friendRequests }) {
   };
   return (
     <div className="mmenu">
-      {console.log("friendRequests", friendRequests)}
       {visible === 0 && (
         <div>
           <Link to="/profile" className="mmenu_header hover3">

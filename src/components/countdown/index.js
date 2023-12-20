@@ -43,17 +43,15 @@ import Header from "../header";
 // }
 
 const Auction = () => {
-
-  const {id} = useParams();
+  const { id } = useParams();
 
   const apiEndpoint = process.env.REACT_APP_BACKEND_URL;
 
   const { user } = useSelector((state) => ({ ...state }));
-  console.log("Userrrrrrrrrrr", user);
   const [bidAmount, setBidAmount] = useState("");
   const [auction, setAuction] = useState(null);
   const [highestBid, setHighestBid] = useState([]);
-  const [submitDisabled, setSubmitDisabled] = useState(true)
+  const [submitDisabled, setSubmitDisabled] = useState(true);
   const [auctionDateTime, setAuctionDateTime] = useState(null);
   const messagesRef = firestore.collection(id);
   const query = messagesRef.orderBy("createdAt").limit(25);
@@ -96,12 +94,15 @@ const Auction = () => {
     if (e.target.value === "" || re.test(e.target.value)) {
       setBidAmount(e.target.value.replace("₹", ""));
     }
-    if (parseInt(e.target.value.replace("₹", "")) > (parseInt(messages[messages.length - 1]?.text || auction.basePrice))) {
+    if (
+      parseInt(e.target.value.replace("₹", "")) >
+      parseInt(messages[messages.length - 1]?.text || auction.basePrice)
+    ) {
       setSubmitDisabled(false);
     } else {
-      setSubmitDisabled(true)
+      setSubmitDisabled(true);
     }
-  }
+  };
 
   const auctionList = async () => {
     try {
@@ -118,22 +119,22 @@ const Auction = () => {
       const bidDateTime = new Date(auc.dateTime).getTime();
       setAuctionDateTime(bidDateTime);
       setAuction(auc);
-      const topBid = Math.max(...auc.bids.map(o => o.x))
-      setHighestBid(topBid)
+      const topBid = Math.max(...auc.bids.map((o) => o.x));
+      setHighestBid(topBid);
     } catch (error) {
       console.log("🚀 ~ file: index.js:26 ~ gameList ~ error:", error);
     }
   };
 
   useEffect(() => {
-      auctionList();
-  }, [])
+    auctionList();
+  }, []);
 
   const THREE_DAYS_IN_MS = 3 * 24 * 60 * 60 * 1000;
   const NOW_IN_MS = new Date().getTime();
 
   const dateTimeAfterThreeDays = NOW_IN_MS + THREE_DAYS_IN_MS;
-// return "Hi"
+  // return "Hi"
   return (
     <div>
       {/* <Nav /> */}
@@ -338,19 +339,21 @@ const Auction = () => {
                                 </a>
                               </h6>
                               <span className="text-slate-400 text-[16px]">
-                                {bid.createdAt && moment(
+                                {bid.createdAt &&
                                   moment(
-                                    DateTime.fromMillis(
-                                      bid?.createdAt?.seconds * 1000 +
-                                        Math.floor(
-                                          bid?.createdAt?.nanoseconds / 1000000
-                                        )
-                                    ).toISO()
-                                  )
-                                    .utcOffset("+05:30")
-                                    .format("DDMMYYYY h:mm:ss a"),
-                                  "DDMMYYYY h:mm:ss a"
-                                ).fromNow()}
+                                    moment(
+                                      DateTime.fromMillis(
+                                        bid?.createdAt?.seconds * 1000 +
+                                          Math.floor(
+                                            bid?.createdAt?.nanoseconds /
+                                              1000000
+                                          )
+                                      ).toISO()
+                                    )
+                                      .utcOffset("+05:30")
+                                      .format("DDMMYYYY h:mm:ss a"),
+                                    "DDMMYYYY h:mm:ss a"
+                                  ).fromNow()}
                               </span>
                             </div>
                           </div>

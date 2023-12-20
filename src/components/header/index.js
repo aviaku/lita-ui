@@ -72,7 +72,6 @@ export default function Header({ page, getAllPosts }) {
           },
         }
       );
-      console.log(res.data);
       if (res.status === 200) {
         setNotifications(res.data);
       }

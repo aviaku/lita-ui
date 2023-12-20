@@ -18,8 +18,6 @@ export default function CreatePostPopup({
   dispatch,
   profile,
 }) {
-
-  console.log("qqqqqqqqqqqqqqqqqqq", posts);
   const popup = useRef(null);
   const [text, setText] = useState("");
   const [showPrev, setShowPrev] = useState(false);
@@ -113,7 +111,6 @@ export default function CreatePostPopup({
     }
   };
 
-  console.log("POSTSSSSS", posts);
   return (
     <div className="blur">
       <div className="postBox" ref={popup}>
