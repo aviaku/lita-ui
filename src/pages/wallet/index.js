@@ -28,41 +28,6 @@ const Wallet = ({ depositAmount }) => {
   const contractAddress = "0xf28B53320913F500c0C28fd3b64b505015791245";
   const tokenAddress = "0xf28B53320913F500c0C28fd3b64b505015791245";
 
-  const handlePayment = useCallback(async () => {
-    // const order = await createOrder(params); //order id return from backend
-
-    const options = {
-      key: "rzp_test_piel1ajBKfxi1A",
-      amount: parseInt(depositAmount) * 100,
-      currency: "INR",
-      // name: "Acme Corp",
-      // description: "Test Transaction",
-      // image: "https://example.com/your_logo",
-      // order_id: order.id, //order id from backend
-      handler: (res) => {},
-      // prefill: {
-      //   name: "Piyush Garg",
-      //   email: "youremail@example.com",
-      //   contact: "9999999999",
-      // },
-      // notes: {
-      //   address: "Razorpay Corporate Office",
-      // },
-      theme: {
-        color: "#3399cc",
-      },
-    };
-
-    const rzpay = new Razorpay(options);
-    rzpay.open();
-  }, [Razorpay, depositAmount]);
-
-  // useEffect(() => {
-  //   if (isLoaded) {
-  //     handlePayment();
-  //   }
-  // }, [isLoaded, handlePayment]);
-
   const { user } = useSelector((state) => ({ ...state }));
   const navigate = useNavigate();
 
@@ -112,15 +77,6 @@ const Wallet = ({ depositAmount }) => {
     if (isTokenAdded) {
       return setTokenAdded(true);
     }
-    // // Check if the token is already added
-    // const isTokenAdded = addedTokens.some(
-    //   (token) => token.address.toLowerCase() === tokenAddress.toLowerCase()
-    // );
-
-    // if (isTokenAdded) {
-    //   return setTokenAdded(true);
-    //   alert("Token is already added to MetaMask");
-    // }
   };
 
   const handleAddToken = async () => {
@@ -159,61 +115,6 @@ const Wallet = ({ depositAmount }) => {
       alert("Error adding token to MetaMask. Please try again.");
     }
   };
-
-  // const transferCustomToken = async (e) => {
-  //   e.preventDefault();
-  //   try {
-  //     const web3 = new Web3(window.ethereum);
-
-  //     // Instantiate the ERC20 contract object
-  //     const contract = new web3.eth.Contract(contractABI, contractAddress);
-
-  //     // Get the balance of the custom token from the sender's account
-  //     const senderBalance = await contract.methods
-  //       .balanceOf(userAddress)
-  //       .call();
-
-  //     // Check if the sender has enough balance to transfer the tokens
-  //     if (senderBalance < amount) {
-  //       console.log("Insufficient balance");
-  //       setError("Insufficient balance");
-  //       return;
-  //     }
-  //     console.log(senderBalance, amount);
-
-  //     // Send the custom tokens from the sender's account to the recipient's account
-  //     const transfer = await contract.methods
-  //       .transfer("0xfbe6f99D39FE5826Dac948bD046BbDB4e2624643", amount)
-  //       .send({ from: userAddress });
-  //     console.log("Transfer:", transfer);
-  //     if (transfer.blockHash) {
-  //       try {
-  //         const res = await axios.post(
-  //           `${process.env.REACT_APP_BACKEND_URL}/addBalance`,
-  //           {
-  //             userId: user.id,
-  //             amount: parseInt(amount) / 1000000000000000000,
-  //             transactionId: transfer.blockHash,
-  //           },
-  //           {
-  //             headers: {
-  //               Authorization: `Bearer ${user.token}`,
-  //             },
-  //           }
-  //         );
-  //         console.log(res.data);
-  //         if (res.status === 200) {
-  //           navigate("/success");
-  //         }
-  //       } catch (error) {}
-  //     }
-  //     // Update the state of the component to reflect the transfer
-  //     // ...
-  //   } catch (err) {
-  //     console.log(err);
-  //     setError(err.message);
-  //   }
-  // };
 
   window.ethereum
     .request({ method: "eth_accounts" })
@@ -361,84 +262,6 @@ const Wallet = ({ depositAmount }) => {
       })
       .catch((error) => console.error(error));
   };
-
-  // useEffect(() => {
-  //   const initWeb3 = async () => {
-  //     // if (window.innerWidth >= 768) {
-  //     //   if (window.ethereum) {
-  //     //     try {
-  //     //       // Request account access if needed
-  //     //       await window.ethereum.request({ method: "eth_requestAccounts" });
-
-  //     //       // Use MetaMask's provider
-  //     //       const provider = new Web3(window.ethereum);
-  //     //       setWeb3(provider);
-  //     //       console.log(provider);
-  //     //     } catch (error) {
-  //     //       console.error("Error connecting to MetaMask:", error);
-  //     //     }
-  //     //   } else {
-  //     //     console.error("MetaMask not detected!");
-  //     //   }
-  //     // } else {
-  //     if (window.ethereum) {
-  //       console.log("MetaMask installed!");
-  //       try {
-  //         const accounts = await window.ethereum.request({
-  //           method: "eth_requestAccounts",
-  //         });
-  //         console.log(accounts);
-  //         setUserAddress(accounts[0]);
-  //         setAccount(accounts[0]);
-  //       } catch (error) {
-  //         console.error("Error connecting to MetaMask:", error);
-  //       }
-  //     } else {
-  //       console.error(
-  //         "MetaMask not found. Please install it to use this feature."
-  //       );
-  //     }
-  //     // }
-  //   };
-
-  //   initWeb3();
-  // }, []);
-
-  // const connect = async () => {
-  //   console.log("connect");
-  //   if (window.ethereum) {
-  //     console.log("MetaMask installed!");
-  //     try {
-  //       const accounts = await window.ethereum.request({
-  //         method: "eth_requestAccounts",
-  //       });
-  //       console.log(accounts);
-  //       setUserAddress(accounts[0]);
-  //       setAccount(accounts[0]);
-  //     } catch (error) {
-  //       console.error("Error connecting to MetaMask:", error);
-  //     }
-  //   } else {
-  //     console.error(
-  //       "MetaMask not found. Please install it to use this feature."
-  //     );
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   const switchNetwork = async (newChainId) => {
-  //     try {
-  //       await window.ethereum.request({
-  //         method: "wallet_switchEthereumChain",
-  //         params: [{ chainId: `0x${newChainId.toString(16)}` }],
-  //       });
-  //     } catch (error) {
-  //       console.error("Error switching network:", error);
-  //     }
-  //   };
-
-  //   switchNetwork(80001);
-  // }, [userAddress]);
 
   const connect = async () => {
     if (window.ethereum) {
